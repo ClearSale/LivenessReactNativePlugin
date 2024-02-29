@@ -1,16 +1,20 @@
 import * as React from 'react';
 
 import {
+  Alert,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useCSLiveness } from 'react-native-csliveness-react-native';
 
 export default function App() {
-  const [clientId, setClientId] = React.useState<string | undefined>();
-  const [clientSecret, setClientSecret] = React.useState<string | undefined>();
+  const [clientId, setClientId] = React.useState<string>('');
+  const [clientSecretId, setClientSecretId] = React.useState<string>('');
+  const [sdkResponse, setSdkResponse] = React.useState<string | null>(null);
+  const { open: openCsLivenessSdk } = useCSLiveness();
 
   return (
     <View style={styles.container}>
@@ -22,14 +26,43 @@ export default function App() {
       />
       <TextInput
         style={styles.input}
-        value={clientSecret}
+        value={clientSecretId}
         placeholder="Client Secret"
-        onChangeText={setClientSecret}
+        onChangeText={setClientSecretId}
       />
 
-      <TouchableOpacity style={styles.button} onPress={() => {}}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={async () => {
+          try {
+            const { responseMessage, sessionId, image } =
+              await openCsLivenessSdk({
+                clientId,
+                clientSecretId,
+              });
+
+            setSdkResponse(responseMessage);
+            console.log(`Received responseMessage: ${responseMessage}`);
+            console.log(`Received sessionId: ${sessionId}`);
+            console.log(`Received image: ${image}`);
+          } catch (e) {
+            console.error(e);
+            Alert.alert(
+              'SDKError',
+              'Something went wrong, check you dev console',
+              [{ text: 'OK' }]
+            );
+          }
+        }}
+      >
         <Text style={styles.buttonTitle}>Open CSLiveness</Text>
       </TouchableOpacity>
+
+      {sdkResponse ? (
+        <View>
+          <Text>Result: {sdkResponse}</Text>
+        </View>
+      ) : null}
     </View>
   );
 }
