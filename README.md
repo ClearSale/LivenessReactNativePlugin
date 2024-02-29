@@ -1,31 +1,107 @@
 # react-native-csliveness-react-native
 
-CSLiveness React Native
+CSLiveness para React Native
 
-## Installation
+## Instalação
 
 ```sh
 npm install react-native-csliveness-react-native
 ```
 
-## Usage
+Adicione um arquivo `clearsale.gradle.env` na raiz do seu projeto de react-native.
+Esse arquivo deve conter as seguintes propriedades:
 
-```js
-import { multiply } from 'react-native-csliveness-react-native';
-
-// ...
-
-const result = await multiply(3, 7);
+```
+CS_LIVENESS_TEC_ARTIFACTS_FEED_URL=ARTIFACTS_FEED_URL // valor fornecido pela clear sale
+CS_LIVENESS_TEC_ARTIFACTS_FEED_NAME=ARTIFACTS_FEED_NAME // valor fornecido pela clear sale
+CS_LIVINESS_TEC_USER=USERNAME // valor fornecido pela clear sale
+CS_LIVINESS_TEC_PASS=ACCESSTOKEN // valor fornecido pela clear sale
+CS_LIVENESS_VERSION=LAST_VERSION // valor fornecido pela clear sale
 ```
 
-## Contributing
+## Instruções de uso
+Importe o plugin no seu projeto e use o `useCSLiveness` hook para receber uma função `open` que irá chamar a SDK nativa do dispositivo.
 
-See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
+O resultado da função `open` é uma promise que pode retornar os seguintes valores:
+```typescript
+type CSLivenessResult = {
+  responseMessage: string;
+  sessionId: string | null;
+  image: string | null;
+};
+```
 
-## License
+## Exemplo de uso
+```js
+import { useCSLiveness } from 'react-native-csliveness-react-native';
 
-MIT
+const reactComponent = () => {
+  const [clientId, setClientId] = React.useState<string>('');
+  const [clientSecretId, setClientSecretId] = React.useState<string>('');
+  const { open: openCsLivenessSdk } = useCSLiveness();
 
----
+  ...
+
+
+  return <TouchableOpacity
+    style={styles.button}
+    onPress={async () => {
+      try {
+        const { responseMessage, sessionId, image } =
+          await openCsLivenessSdk({
+            clientId,
+            clientSecretId,
+          });
+
+        console.log(`Received responseMessage: ${responseMessage}`);
+        console.log(`Received sessionId: ${sessionId}`);
+        console.log(`Received image: ${image}`);
+      } catch (e) {
+        console.error(e);
+        Alert.alert(
+          'SDKError',
+          'Something went wrong, check you dev console',
+          [{ text: 'OK' }]
+        );
+      }
+    }}
+  >
+    <Text style={styles.buttonTitle}>Open CSLiveness</Text>
+  </TouchableOpacity>
+}
+```
+
+## Android
+
+Para `Android` também é possível passar um callback caso a permissão seja negada e o usuário escolha que não pergunte mais.
+O callback tem a seguinte assinatura: `androidNeverAskPermissionAgainCallback: () => {}` e é o segundo parâmetro da função `open`.
+
+## Executando o aplicativo de exemplo
+
+1. Conecte um dispositivo físico (`Android` ou `iOS` - o nosso `SDK` não roda em emuladores, apenas em dispositivos fisícos) à sua máquina de desenvolvimento.
+2. Clone esse repositório e rode `yarn`. Como esse projeto usa `yarn workspaces`, deve-se usar o comando `yarn` para instalar as dependências.
+3. Coloque suas credenciais no arquivo clearsale.gradle.env na raiz do projeto `react-native`
+4. Rode `yarn example android|ios`
+5. Ao pressionar o botão `Open CSLiveness` o SDK Liveness iniciará. Após completar o fluxo o aplicativo retornara o `responseMessage`, `image` e `sessionId`.
+
+## Detalhes de privacidade
+
+**Uso de dados**
+
+Todas as informações coletadas pelo SDK da ClearSale são com exclusiva finalidade de prevenção à fraude e proteção ao próprio usuário, aderente à política de segurança e privacidade das plataformas Google e Apple e à LGPD. Por isso, estas informações devem constar na política de privacidade do aplicativo.
+
+**Tipo de dados coletados**
+
+O SDK da ClearSale coleta as seguintes informações do dispositivo :
+
+Características físicas do dispositivo/ hardware (Como tela, modelo, nome do dispositivo);
+Características de software (Como versão, idioma, build, controle parental);
+Informações da câmera;
+Licença de Uso
+Ao realizar o download e utilizar nosso SDK você estará concordando com a seguinte licença:
+
+**Copyright © 2022 ClearSale**
+
+Todos os direitos são reservados, sendo concedida a permissão para usar o software da maneira como está, não sendo permitido qualquer modificação ou cópia para qualquer fim. O Software é licenciado com suas atuais configurações “tal como está” e sem garantia de qualquer espécie, nem expressa e nem implícita, incluindo mas não se limitando, garantias de comercialização, adequação para fins particulares e não violação de direitos patenteados. Em nenhuma hipótese os titulares dos Direitos Autorais podem ser responsabilizados por danos, perdas, causas de ação, quer seja por contrato ou ato ilícito, ou outra ação tortuosa advinda do uso do Software ou outras ações relacionadas com este Software sem prévia autorização escrita do detentor dos direitos autorais.
 
 Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)
