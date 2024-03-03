@@ -1,5 +1,5 @@
 {
-  "name": "react-native-csliveness-react-native",
+  "name": "csliveness-react-native",
   "version": "0.1.0",
   "description": "CSLiveness React Native",
   "main": "lib/commonjs/index",
@@ -26,7 +26,7 @@
     "!**/.*"
   ],
   "scripts": {
-    "example": "yarn workspace react-native-csliveness-react-native-example",
+    "example": "yarn workspace csliveness-react-native-example",
     "test": "jest",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
@@ -41,14 +41,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/matheusccastroo/react-native-csliveness-react-native.git"
+    "url": "git+https://github.com/matheusccastroo/csliveness-react-native.git"
   },
   "author": "matheusccastro <camargodecastromatheus@gmail.com> (https://github.com/matheusccastroo)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/matheusccastroo/react-native-csliveness-react-native/issues"
+    "url": "https://github.com/matheusccastroo/csliveness-react-native/issues"
   },
-  "homepage": "https://github.com/matheusccastroo/react-native-csliveness-react-native#readme",
+  "homepage": "https://github.com/matheusccastroo/csliveness-react-native#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },

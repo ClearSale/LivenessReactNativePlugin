@@ -8,12 +8,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useCSLiveness } from 'react-native-csliveness-react-native';
+import type { CSLivenessResult } from 'csliveness-react-native';
+import { useCSLiveness } from 'csliveness-react-native';
 
 export default function App() {
   const [clientId, setClientId] = React.useState<string>('');
   const [clientSecretId, setClientSecretId] = React.useState<string>('');
-  const [sdkResponse, setSdkResponse] = React.useState<string | null>(null);
+  const [sdkResponse, setSdkResponse] = React.useState<CSLivenessResult | null>(
+    null
+  );
   const { open: openCsLivenessSdk } = useCSLiveness();
 
   return (
@@ -35,16 +38,17 @@ export default function App() {
         style={styles.button}
         onPress={async () => {
           try {
-            const { responseMessage, sessionId, image } =
-              await openCsLivenessSdk({
-                clientId,
-                clientSecretId,
-              });
+            const sdkResponse = await openCsLivenessSdk({
+              clientId,
+              clientSecretId,
+            });
 
-            setSdkResponse(responseMessage);
-            console.log(`Received responseMessage: ${responseMessage}`);
-            console.log(`Received sessionId: ${sessionId}`);
-            console.log(`Received image: ${image}`);
+            setSdkResponse(sdkResponse);
+            console.log(
+              `Received responseMessage: ${sdkResponse.responseMessage}`
+            );
+            console.log(`Received sessionId: ${sdkResponse.sessionId}`);
+            console.log(`Received image: ${sdkResponse.image}`);
           } catch (e) {
             console.error(e);
             Alert.alert(
@@ -52,6 +56,8 @@ export default function App() {
               'Something went wrong, check you dev console',
               [{ text: 'OK' }]
             );
+
+            setSdkResponse(e.toString());
           }
         }}
       >
@@ -60,7 +66,7 @@ export default function App() {
 
       {sdkResponse ? (
         <View>
-          <Text>Result: {sdkResponse}</Text>
+          <Text>Result: {JSON.stringify(sdkResponse)}</Text>
         </View>
       ) : null}
     </View>
@@ -73,11 +79,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 20,
+    backgroundColor: 'white',
   },
   input: {
     width: '90%',
     borderWidth: 5,
     padding: 10,
+    backgroundColor: 'grey',
   },
   button: {
     alignItems: 'center',

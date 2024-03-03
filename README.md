@@ -1,11 +1,11 @@
-# react-native-csliveness-react-native
+# csliveness-react-native
 
 CSLiveness para React Native
 
 ## Instalação
 
 ```sh
-npm install react-native-csliveness-react-native
+npm install csliveness-react-native
 ```
 
 Adicione um arquivo `clearsale.gradle.env` na raiz do seu projeto de react-native.
@@ -31,9 +31,14 @@ type CSLivenessResult = {
 };
 ```
 
+Atenção: em caso de erro, ele será retornado através do parâmetro `responseMessage`, então sempre cheque esse valor.
+Isso acontece para manter a API do `JavaScript` consistente entre para as duas plataformas (`Android` e `iOS`).
+
+A promise será rejeitada somente em casos extremos, como falha ao abrir o SDK por exemplo.
+
 ## Exemplo de uso
 ```js
-import { useCSLiveness } from 'react-native-csliveness-react-native';
+import { useCSLiveness } from 'csliveness-react-native';
 
 const reactComponent = () => {
   const [clientId, setClientId] = React.useState<string>('');
@@ -70,11 +75,6 @@ const reactComponent = () => {
   </TouchableOpacity>
 }
 ```
-
-## Android
-
-Para `Android` também é possível passar um callback caso a permissão seja negada e o usuário escolha que não pergunte mais.
-O callback tem a seguinte assinatura: `androidNeverAskPermissionAgainCallback: () => {}` e é o segundo parâmetro da função `open`.
 
 ## Executando o aplicativo de exemplo
 
