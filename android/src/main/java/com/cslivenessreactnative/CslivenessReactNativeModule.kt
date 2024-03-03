@@ -27,8 +27,17 @@ class CslivenessReactNativeModule(reactContext: ReactApplicationContext) :
     return NAME
   }
 
+  private fun resetPromise() {
+    this.promise = null;
+  }
+
   @ReactMethod
   fun openCSLiveness(sdkParams: ReadableMap, promise: Promise) {
+    if (this.promise !== null) {
+      // Means that we have a SDK call pending, so nothing to do yet.
+      return;
+    }
+
     val clientId: String = if (sdkParams.hasKey("clientId") && sdkParams.getString("clientId") != null) sdkParams.getString("clientId")!! else throw Exception("clientId is required")
     val clientSecretId: String = if (sdkParams.hasKey("clientSecretId") && sdkParams.getString("clientSecretId") != null) sdkParams.getString("clientSecretId")!! else throw Exception("clientSecretId is required")
     val vocalGuidance: Boolean = if (sdkParams.hasKey("vocalGuidance")) sdkParams.getBoolean("vocalGuidance") else false
@@ -46,8 +55,12 @@ class CslivenessReactNativeModule(reactContext: ReactApplicationContext) :
       reactApplicationContext.startActivityForResult(intent, requestCode, null)
     } catch (t: Throwable) {
       Log.e("[CSLiveness]", "Error starting CSLivenessSDK", t)
-      this.promise?.reject("Failed to start CSLivenessSDK", t)
-      this.promise = null
+
+      val responseMap = WritableNativeMap()
+      responseMap.putString("responseMessage", t.message ?: "InternalError")
+
+      this.promise?.resolve(responseMap)
+      this.resetPromise()
     }
   }
 
@@ -61,30 +74,28 @@ class CslivenessReactNativeModule(reactContext: ReactApplicationContext) :
       if (activityRequestCode == requestCode) {
         val responseMap: WritableMap = WritableNativeMap()
 
-        if (activityResultCode == Activity.RESULT_OK && data != null) {
+        try {
+          if (activityResultCode != Activity.RESULT_OK || data == null) {
+            throw Exception("UserCancel")
+          }
+
           val csLivenessResult =
             data.getSerializableExtra(CSLiveness.PARAMETER_NAME) as CSLivenessResult
 
-          val responseMessage = csLivenessResult.responseMessage;
-          responseMap.putString("responseMessage", responseMessage)
-
-          val sessionId = csLivenessResult.sessionId
-          responseMap.putString("sessionId", sessionId)
-
-          val image = csLivenessResult.image
-          responseMap.putString("image", image)
+          responseMap.putString("responseMessage", csLivenessResult.responseMessage)
+          responseMap.putString("sessionId", csLivenessResult.sessionId)
+          responseMap.putString("image", csLivenessResult.image)
 
           Log.d("[CSLiveness] Result", responseMap.toString())
-
           promise?.resolve(responseMap)
-        } else {
-          responseMap.putString("responseMessage", "UserCancel")
-          Log.d("[CSLiveness] Result", responseMap.toString())
+        } catch (t: Throwable) {
+          Log.e("[CSLiveness] Error", t.message ?: "An error occurred")
 
+          responseMap.putString("responseMessage", t.message ?: "InternalError")
           promise?.resolve(responseMap)
         }
 
-        promise = null
+        resetPromise()
       }
 
       super.onActivityResult(activity, activityRequestCode, activityResultCode, data)
