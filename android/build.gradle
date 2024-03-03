@@ -1,3 +1,38 @@
+
+def setupEnvFile(searchParam) {
+  if (searchParam !== null && System.properties[searchParam] !== null) {
+    return System.properties[searchParam]
+  }
+
+  if (System.properties['ENV_FILE_PATH'] == null) {
+    // First try searching on project root.
+    def projectFileEnv = new File("$rootProject.rootDir/../clearsale.gradle.env")
+    def projectFileEnvExists = projectFileEnv.exists()
+    if (projectFileEnvExists) {
+      System.properties['ENV_FILE_PATH'] = projectFileEnv.path
+    } else {
+      System.properties['ENV_FILE_PATH'] = System.env.DIRNAME ?: System.env.PWD + "/../clearsale.gradle.env"
+    }
+  }
+
+  file(System.properties['ENV_FILE_PATH']).readLines().each() {
+    def (key, value) = it.tokenize('=');
+    if (key !== null && value !== null) {
+      System.properties[key] = value
+    } else {
+      throw new InvalidUserDataException("[CSLIVENESS SDK] - Invalid value for clearsale.gradle.env. Received key: $key, value: $value")
+    }
+  }
+
+  if (searchParam !== null) {
+    return System.properties[searchParam]
+  }
+
+  return null
+}
+
+setupEnvFile()
+
 buildscript {
   // Buildscript is evaluated before everything else so we can't use getExtOrDefault
   def kotlin_version = rootProject.ext.has("kotlinVersion") ? rootProject.ext.get("kotlinVersion") : project.properties["CslivenessReactNative_kotlinVersion"]
@@ -8,7 +43,7 @@ buildscript {
   }
 
   dependencies {
-    classpath "com.android.tools.build:gradle:8.0.0"
+    classpath "com.android.tools.build:gradle:7.2.1"
     // noinspection DifferentKotlinGradleVersion
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
@@ -79,40 +114,6 @@ android {
 
 def kotlin_version = getExtOrDefault("kotlinVersion")
 
-def setupEnvFile(searchParam) {
-  if (searchParam !== null && System.properties[searchParam] !== null) {
-    return System.properties[searchParam]
-  }
-
-  if (System.properties['ENV_FILE_PATH'] == null) {
-    // First try searching on project root.
-    def projectFileEnv = new File("$rootProject.rootDir/../clearsale.gradle.env")
-    def projectFileEnvExists = projectFileEnv.exists()
-    if (projectFileEnvExists) {
-      System.properties['ENV_FILE_PATH'] = projectFileEnv.path
-    } else {
-      System.properties['ENV_FILE_PATH'] = System.env.DIRNAME ?: System.env.PWD + "/../clearsale.gradle.env"
-    }
-  }
-
-  file(System.properties['ENV_FILE_PATH']).readLines().each() {
-    def (key, value) = it.tokenize('=');
-    if (key !== null && value !== null) {
-      System.properties[key] = value
-    } else {
-      throw new InvalidUserDataException("[CSLIVENESS SDK] - Invalid value for clearsale.gradle.env. Received key: $key, value: $value")
-    }
-  }
-
-  if (searchParam !== null) {
-    return System.properties[searchParam]
-  }
-
-  return null
-}
-
-setupEnvFile()
-
 rootProject.allprojects {
   repositories {
     google()
@@ -135,7 +136,7 @@ dependencies {
   // For < 0.71, this will be from the local maven repo
   // For > 0.71, this will be replaced by `com.facebook.react:react-android:$version` by react gradle plugin
   //noinspection GradleDynamicVersion
-  implementation "com.facebook.react:react-android:0.71.12"
+  implementation "com.facebook.react:react-android:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation "sale.clear.studio:sdk-csliveness:$System.properties.CS_LIVENESS_VERSION"
 }
