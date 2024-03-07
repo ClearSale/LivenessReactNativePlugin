@@ -73,8 +73,11 @@ extension CslivenessReactNative: CSLivenessDelegate {
         NSLog("\(LOG_TAG) - called livenessError")
         NSLog("\(LOG_TAG) - \(error.localizedDescription) -> \(error.rawValue)")
 
-        if let promiseReject = self.reject {
-            promiseReject(String(error.rawValue), String(error.rawValue), error)
+        let responseMap = NSMutableDictionary();
+        responseMap.setValue("\(error.localizedDescription) -> \(error.rawValue)", forKey: "responseMessage")
+        
+        if let promiseResolve = self.resolve {
+            promiseResolve(responseMap)
         }
 
         self.reset()

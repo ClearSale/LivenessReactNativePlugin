@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import {
   Alert,
-  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -45,14 +44,10 @@ export default function App() {
             });
 
             setSdkResponse(response);
-            if (Platform.OS === 'android') {
-              console.log(
-                `Received responseMessage: ${response.responseMessage}`
-              );
-            } else if (Platform.OS === 'ios') {
-              console.log(`Received real: ${response.real}`);
-            }
-
+            console.log(
+              `Received responseMessage: ${response.responseMessage}`
+            );
+            console.log(`Received real: ${response.real}`);
             console.log(`Received sessionId: ${response.sessionId}`);
             console.log(`Received image: ${response.image}`);
           } catch (e) {

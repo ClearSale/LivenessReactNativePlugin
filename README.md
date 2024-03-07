@@ -25,14 +25,18 @@ Importe o plugin no seu projeto e use o `useCSLiveness` hook para receber uma fu
 O resultado da função `open` é uma promise que pode retornar os seguintes valores:
 ```typescript
 type CSLivenessResult = {
-  responseMessage: string;
+  real?: boolean;
+  responseMessage?: string;
   sessionId: string | null;
   image: string | null;
 };
 ```
 
-Atenção: em caso de erro, ele será retornado através do parâmetro `responseMessage`, então sempre cheque esse valor.
+### Atenção
+Em caso de erro, ele será retornado através do parâmetro `responseMessage`, então sempre cheque esse valor.
 Isso acontece para manter a API do `JavaScript` consistente entre para as duas plataformas (`Android` e `iOS`).
+
+Além disso, somente para `iOS`, a propriedade `real` é retornado do resultado.
 
 A promise será rejeitada somente em casos extremos, como falha ao abrir o SDK por exemplo.
 
