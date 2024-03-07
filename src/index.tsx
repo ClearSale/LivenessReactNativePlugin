@@ -47,7 +47,8 @@ type CSLivenessConfiguration = {
 };
 
 export type CSLivenessResult = {
-  responseMessage: string;
+  real?: boolean;
+  responseMessage?: string;
   sessionId: string | null;
   image: string | null;
 };

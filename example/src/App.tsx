@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import {
   Alert,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -38,17 +39,22 @@ export default function App() {
         style={styles.button}
         onPress={async () => {
           try {
-            const sdkResponse = await openCsLivenessSdk({
+            const response = await openCsLivenessSdk({
               clientId,
               clientSecretId,
             });
 
-            setSdkResponse(sdkResponse);
-            console.log(
-              `Received responseMessage: ${sdkResponse.responseMessage}`
-            );
-            console.log(`Received sessionId: ${sdkResponse.sessionId}`);
-            console.log(`Received image: ${sdkResponse.image}`);
+            setSdkResponse(response);
+            if (Platform.OS === 'android') {
+              console.log(
+                `Received responseMessage: ${response.responseMessage}`
+              );
+            } else if (Platform.OS === 'ios') {
+              console.log(`Received real: ${response.real}`);
+            }
+
+            console.log(`Received sessionId: ${response.sessionId}`);
+            console.log(`Received image: ${response.image}`);
           } catch (e) {
             console.error(e);
             Alert.alert(
