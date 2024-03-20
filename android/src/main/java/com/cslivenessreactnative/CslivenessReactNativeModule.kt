@@ -82,6 +82,7 @@ class CslivenessReactNativeModule(reactContext: ReactApplicationContext) :
           val csLivenessResult =
             data.getSerializableExtra(CSLiveness.PARAMETER_NAME) as CSLivenessResult
 
+          responseMap.putBoolean("real", csLivenessResult.responseMessage.compareTo("real", true) == 0);
           responseMap.putString("responseMessage", csLivenessResult.responseMessage)
           responseMap.putString("sessionId", csLivenessResult.sessionId)
           responseMap.putString("image", csLivenessResult.image)
