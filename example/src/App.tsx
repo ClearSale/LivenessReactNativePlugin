@@ -43,7 +43,10 @@ export default function App() {
               clientSecretId,
             });
 
-            setSdkResponse(response);
+            setSdkResponse({
+              ...response,
+              image: response.image && `${response.image.slice(0, 20)}...`,
+            });
             console.log(
               `Received responseMessage: ${response.responseMessage}`
             );
@@ -67,7 +70,7 @@ export default function App() {
 
       {sdkResponse ? (
         <View>
-          <Text>Result: {JSON.stringify(sdkResponse)}</Text>
+          <Text>Result: {JSON.stringify(sdkResponse, undefined, 2)}</Text>
         </View>
       ) : null}
     </View>

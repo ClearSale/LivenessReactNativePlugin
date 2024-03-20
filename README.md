@@ -33,6 +33,12 @@ target 'NOME_DO_SEU_PROJETO' do
 end
 ```
 
+Adicione também no sue `Info.plist` a seguinte entrada:
+```
+<key>NSCameraUsageDescription</key>
+<string>This app requires access to the camera.</string>
+```
+
 ## Instruções de uso
 Importe o plugin no seu projeto e use o `useCSLiveness` hook para receber uma função `open` que irá chamar a SDK nativa do dispositivo.
 
