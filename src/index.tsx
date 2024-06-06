@@ -36,6 +36,26 @@ const CSLivenessSchema = new SimpleSchema({
     defaultValue: null,
     optional: true,
   },
+  primaryColor: {
+    type: String,
+    defaultValue: null,
+    optional: true,
+  },
+  secondaryColor: {
+    type: String,
+    defaultValue: null,
+    optional: true,
+  },
+  titleColor: {
+    type: String,
+    defaultValue: null,
+    optional: true,
+  },
+  paragraphColor: {
+    type: String,
+    defaultValue: null,
+    optional: true,
+  },
 });
 
 type CSLivenessConfiguration = {
@@ -44,6 +64,10 @@ type CSLivenessConfiguration = {
   vocalGuidance?: boolean;
   identifierId?: string | null;
   cpf?: string | null;
+  primaryColor?: string | null;
+  secondaryColor?: string | null;
+  titleColor?: string | null;
+  paragraphColor?: string | null;
 };
 
 export type CSLivenessResult = {
