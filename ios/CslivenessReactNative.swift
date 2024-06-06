@@ -1,85 +1,108 @@
 import CSLivenessSDK
 
-@objc(CslivenessReactNative)
-class CslivenessReactNative: NSObject {
+extension UIColor {
+    convenience init(_ hex: String, alpha: CGFloat = 1.0) {
+        var cString = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        
+        if cString.hasPrefix("#") { cString.removeFirst() }
+        
+        if cString.count != 6 {
+            self.init("ff0000") // return red color for wrong hex input
+            return
+        }
+        
+        var rgbValue: UInt64 = 0
+        Scanner(string: cString).scanHexInt64(&rgbValue)
+        
+        self.init(red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+                  green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+                  blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+                  alpha: alpha)
+    }
+}
+
+@objc(CSLivenessReactNative)
+class CSLivenessReactNative: NSObject {
     private var resolve: RCTPromiseResolveBlock?
     private var reject: RCTPromiseRejectBlock?
-    private var livenessSdk: CSLiveness?
-    private let LOG_TAG: String = "[CSLivenessRN]"
-        
+    private var sdk: CSLiveness?
+    private let logTag: String = "[CSLivenessRN]"
+    
     private func reset() -> Void {
         self.resolve = nil
         self.reject = nil
-        self.livenessSdk = nil
+        self.sdk = nil
     }
-
+    
     @objc(openCSLiveness:withResolver:withRejecter:)
     func openCSLiveness(sdkParams: NSDictionary, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) -> Void {
-        if let livenessSdk = self.livenessSdk, let resolver = self.resolve, let reject = self.reject {
+        if self.resolve != nil || self.reject != nil {
             // Means that we are already running and somehow the button got triggered again.
             // In this case just return.
             
             return
         }
         
-        if let clientId = sdkParams["clientId"] as? String, let clientSecretId = sdkParams["clientSecretId"] as? String {
-            let identifierId = sdkParams["identifierId"] as? String ?? nil
-            let cpf = sdkParams["cpf"] as? String ?? nil
-            let vocalGuidance = sdkParams["vocalGuidance"] as? Bool ?? false
+        if let clientId = sdkParams["clientId"] as? String, let clientSecretId = sdkParams["clientSecretId"] as? String, let vocalGuidance = sdkParams["vocalGuidance"] as? Bool {
             
-            self.resolve = resolve
-            self.reject = reject
-
+            self.resolve = resolve;
+            self.reject = reject;
+            
+            let primaryColor = sdkParams["primaryColor"] != nil ? UIColor(sdkParams["primaryColor"] as! String) : nil;
+            let secondaryColor = sdkParams["secondaryColor"] != nil ? UIColor(sdkParams["secondaryColor"] as! String) : nil;
+            let titleColor = sdkParams["titleColor"] != nil ? UIColor(sdkParams["titleColor"] as! String) : nil;
+            let paragraphColor = sdkParams["paragraphColor"] != nil ? UIColor(sdkParams["paragraphColor"] as! String) : nil;
+            
+            let identifierId = sdkParams["identifierId"] as? String ?? ""
+            let cpf = sdkParams["cpf"] as? String ?? ""
+            
             DispatchQueue.main.async {
-                let livenessSdkConfiguration = CSLivenessConfigurations(clientId: clientId, clientSecret: clientSecretId, identifierId: identifierId, cpf: cpf)
-
+                let livenessConfiguration = CSLivenessConfig(clientId: clientId, clientSecret: clientSecretId, identifierId: identifierId, cpf: cpf, colors: CSLivenessColorsConfig(primaryColor: primaryColor, secondaryColor: secondaryColor, titleColor: titleColor, paragraphColor: paragraphColor))
+                
                 if let viewController = UIApplication.shared.keyWindow?.rootViewController {
-                    self.livenessSdk = CSLiveness(configurations: livenessSdkConfiguration, vocalGuidance: vocalGuidance)
-                    self.livenessSdk?.delegate = self
-                    self.livenessSdk?.start(viewController: viewController, animated: true)
+                    self.sdk = CSLiveness(configuration: livenessConfiguration, vocalGuidance: vocalGuidance)
+                    self.sdk?.delegate = self
+                    self.sdk?.start(viewController: viewController, animated: true)
                 } else {
-                    reject("ViewControllerMissing", "Unable to find view controller", nil)
+                    reject( "ViewControllerMissing", "Unable to find view controller",nil);
+                    
+                    self.reset()
                 }
             }
         } else {
-           reject("MissingParameters", "Missing clientId or clientSecretId or both", nil)
+            reject( "MissingParameters", "Missing clientId, clientSecretId or both",nil);
+            self.reset();
         }
     }
 }
 
-extension CslivenessReactNative: CSLivenessDelegate {
-    func liveness(didOpen: Bool) {
-        NSLog("\(LOG_TAG) - called didOpen")
+extension CSLivenessReactNative: CSLivenessDelegate {
+    public func liveness(didOpen: Bool) {
+        NSLog("\(logTag) - called didOpen")
     }
     
-    func liveness(success: CSLivenessResult) {
-        NSLog("\(LOG_TAG) - called didFinishCapture")
-
+    public func liveness(success: CSLivenessResult) {
+        NSLog("\(logTag) - called didFinishCapture")
+        
         let responseMap = NSMutableDictionary();
         responseMap.setValue(success.real, forKey: "real")
         responseMap.setValue(success.sessionId, forKey: "sessionId")
         responseMap.setValue(success.image, forKey: "image")
         
-        if let promiseResolve = self.resolve {
-            promiseResolve(responseMap)
-        } else if let promiseReject = self.reject {
-            promiseReject("InternalError", "Missing promise rejector", nil)
+        if let resolve = self.resolve {
+            resolve(responseMap)
         }
-
-        self.reset()
+        
+        self.reset();
     }
     
-    func liveness(error: CSLivenessError) {
-        NSLog("\(LOG_TAG) - called livenessError")
-        NSLog("\(LOG_TAG) - \(error.localizedDescription) -> \(error.rawValue)")
-
-        let responseMap = NSMutableDictionary();
-        responseMap.setValue("\(error.localizedDescription) -> \(error.rawValue)", forKey: "responseMessage")
+    public func liveness(error: CSLivenessError) {
+        NSLog("\(logTag) - called didReceiveError")
         
-        if let promiseResolve = self.resolve {
-            promiseResolve(responseMap)
+        if let reject = self.reject {
+            reject(error.localizedDescription, error.rawValue, nil)
         }
-
+        
         self.reset()
     }
 }

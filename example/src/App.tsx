@@ -51,13 +51,13 @@ export default function App() {
         />
         <TextInput
           style={styles.input}
-          value={clientSecretId}
+          value={identifierId || ''}
           placeholder="Identifier ID"
           onChangeText={setIdentifierId}
         />
         <TextInput
           style={styles.input}
-          value={clientSecretId}
+          value={cpf || ''}
           placeholder="CPF"
           onChangeText={setCpf}
         />
@@ -105,6 +105,7 @@ export default function App() {
                 clientSecretId,
                 identifierId,
                 cpf,
+                vocalGuidance,
                 primaryColor,
                 secondaryColor,
                 titleColor,

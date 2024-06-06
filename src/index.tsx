@@ -7,8 +7,8 @@ const LINKING_ERROR =
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
 
-const CslivenessReactNative = NativeModules.CslivenessReactNative
-  ? NativeModules.CslivenessReactNative
+const CslivenessReactNative = NativeModules.CSLivenessReactNative
+  ? NativeModules.CSLivenessReactNative
   : new Proxy(
       {},
       {
