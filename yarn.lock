@@ -5123,6 +5123,7 @@ __metadata:
     babel-plugin-module-resolver: ^5.0.0
     react: 18.2.0
     react-native: 0.73.5
+    react-native-wheel-color-picker: ^1.3.1
   languageName: unknown
   linkType: soft
 
@@ -10922,6 +10923,22 @@ __metadata:
   bin:
     bob: bin/bob
   checksum: 258da6ecd03be52cc05a3e3a7c481890c7c0b7b62ae9f263c5f3d6fafeae95bd9445ad2f6c2513f7f4e4569eee935a18ae94c7491f58d6916af515c88de9e0a1
+  languageName: node
+  linkType: hard
+
+"react-native-elevation@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "react-native-elevation@npm:1.0.0"
+  checksum: 988edf86b441459e65f5121b0f916087c94dc0fb4bf7a36da4718b633644dbf10313054208cc4758302fbaa7e1d7b99d29004efc937466ecd7d66c2372f47129
+  languageName: node
+  linkType: hard
+
+"react-native-wheel-color-picker@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "react-native-wheel-color-picker@npm:1.3.1"
+  dependencies:
+    react-native-elevation: ^1.0.0
+  checksum: a9f34ff91e4181c3fb77b436393f3bd2232d7644c0193553b2ccbe3a9f71dd77f1d61884577c3be882f16baed2e91ef533d341fc874795fe1acd613b27549506
   languageName: node
   linkType: hard
 

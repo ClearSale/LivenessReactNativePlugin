@@ -1,19 +1,17 @@
-import * as React from 'react';
-
+import React, { useState } from 'react';
 import {
   Alert,
   Animated,
-  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import CheckBox from '@react-native-community/checkbox';
 import type { CSLivenessResult } from 'csliveness-react-native';
 import { useCSLiveness } from 'csliveness-react-native';
-import { useState } from 'react';
+import CheckBox from '@react-native-community/checkbox';
+import { ColorButton } from './ColorButton';
 
 export default function App() {
   const [clientId, setClientId] = useState<string>('');
@@ -31,7 +29,7 @@ export default function App() {
   const { open: openCsLivenessSdk } = useCSLiveness();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Animated.ScrollView
         style={styles.scrollViewStyle}
         contentContainerStyle={styles.scrollViewContentStyle}
@@ -62,38 +60,40 @@ export default function App() {
           onChangeText={setCpf}
         />
 
-        <TextInput
-          style={styles.input}
-          value={primaryColor!}
-          placeholder="Primary Color"
-          onChangeText={setPrimaryColor}
-        />
-        <TextInput
-          style={styles.input}
-          value={secondaryColor!}
-          placeholder="Seconrady Color"
-          onChangeText={setSecondaryColor}
-        />
-        <TextInput
-          style={styles.input}
-          value={titleColor!}
-          placeholder="Title Color"
-          onChangeText={setTitleColor}
-        />
-        <TextInput
-          style={styles.input}
-          value={paragraphColor!}
-          placeholder="Paragraph Color"
-          onChangeText={setParagraphColor}
-        />
-
-        <View style={styles.checkboxContainer}>
-          <CheckBox
-            disabled={false}
-            value={vocalGuidance}
-            onValueChange={setVocalGuidance}
+        <View style={styles.checkboxAndButtonContainer}>
+          <ColorButton
+            color={primaryColor}
+            setColor={setPrimaryColor}
+            buttonTitleStyle={styles.buttonTitle}
+            label="Primary Color"
           />
-          <Text>Vocal Guidance</Text>
+          <ColorButton
+            color={secondaryColor}
+            setColor={setSecondaryColor}
+            buttonTitleStyle={styles.buttonTitle}
+            label="Secondary Color"
+          />
+          <ColorButton
+            color={titleColor}
+            setColor={setTitleColor}
+            buttonTitleStyle={styles.buttonTitle}
+            label="Title Color"
+          />
+          <ColorButton
+            color={paragraphColor}
+            setColor={setParagraphColor}
+            buttonTitleStyle={styles.buttonTitle}
+            label="Paragraph Color"
+          />
+
+          <View style={styles.checkboxContainer}>
+            <CheckBox
+              disabled={false}
+              value={vocalGuidance}
+              onValueChange={setVocalGuidance}
+            />
+            <Text>Vocal Guidance</Text>
+          </View>
         </View>
 
         <TouchableOpacity
@@ -143,7 +143,7 @@ export default function App() {
           </View>
         ) : null}
       </Animated.ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -154,6 +154,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 20,
     backgroundColor: 'white',
+    marginVertical: 20,
   },
   title: {
     fontSize: 20,
@@ -162,7 +163,6 @@ const styles = StyleSheet.create({
   scrollViewStyle: { width: '100%' },
   scrollViewContentStyle: {
     width: '100%',
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 20,
@@ -172,6 +172,13 @@ const styles = StyleSheet.create({
     borderWidth: 5,
     padding: 10,
     backgroundColor: 'grey',
+  },
+  checkboxAndButtonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 20,
   },
   checkboxContainer: { flexDirection: 'row', alignItems: 'center', gap: 20 },
   button: {
