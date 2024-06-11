@@ -38,6 +38,8 @@ export const ColorButton = ({
             sliderSize={20}
             noSnap={false}
             row={true}
+            useNativeDriver={true}
+            useNativeLayout={true}
           />
           <TouchableOpacity
             style={styles.button}
@@ -52,9 +54,15 @@ export const ColorButton = ({
 };
 
 const styles = StyleSheet.create({
-  buttonTrigger: { flexDirection: 'column', alignItems: 'center', gap: 10 },
+  buttonTrigger: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 10,
+  },
   modalContainer: {
-    flex: 1,
+    flexDirection: 'column',
+    height: '100%',
+    paddingVertical: 50,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
@@ -102,6 +110,6 @@ const styles = StyleSheet.create({
     elevation: 3,
     color: 'white',
     backgroundColor: 'black',
-    width: 130,
+    width: 150,
   },
 });

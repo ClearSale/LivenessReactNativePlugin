@@ -2,8 +2,11 @@ package com.cslivenessreactnative
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.util.Log
 import com.clear.studio.csliveness.core.CSLiveness
+import com.clear.studio.csliveness.core.CSLivenessConfig
+import com.clear.studio.csliveness.core.CSLivenessConfigColors
 import com.clear.studio.csliveness.core.CSLivenessResult
 import com.clear.studio.csliveness.view.CSLivenessActivity
 import com.facebook.react.bridge.ActivityEventListener
@@ -13,21 +16,23 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
-import com.facebook.react.bridge.WritableMap
 import com.facebook.react.bridge.WritableNativeMap
 
 
-class CslivenessReactNativeModule(reactContext: ReactApplicationContext) :
+class CSLivenessReactNative(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
 
   private val requestCode: Int = 40
+  private val parameterName: String = "PARAMETER_NAME"
+  private val logTag = "[CSLiveness]"
+
   private var promise: Promise? = null
 
   override fun getName(): String {
     return NAME
   }
 
-  private fun resetPromise() {
+  private fun reset() {
     this.promise = null;
   }
 
@@ -35,32 +40,57 @@ class CslivenessReactNativeModule(reactContext: ReactApplicationContext) :
   fun openCSLiveness(sdkParams: ReadableMap, promise: Promise) {
     if (this.promise !== null) {
       // Means that we have a SDK call pending, so nothing to do yet.
+
       return;
     }
 
-    val clientId: String = if (sdkParams.hasKey("clientId") && sdkParams.getString("clientId") != null) sdkParams.getString("clientId")!! else throw Exception("clientId is required")
-    val clientSecretId: String = if (sdkParams.hasKey("clientSecretId") && sdkParams.getString("clientSecretId") != null) sdkParams.getString("clientSecretId")!! else throw Exception("clientSecretId is required")
-    val vocalGuidance: Boolean = if (sdkParams.hasKey("vocalGuidance")) sdkParams.getBoolean("vocalGuidance") else false
-    val identifierId: String? = if (sdkParams.hasKey("identifierId") && sdkParams.getString("identifierId") != null) sdkParams.getString("identifierId") else null
-    val cpf: String? = if (sdkParams.hasKey("cpf") && sdkParams.getString("cpf") != null) sdkParams.getString("cpf") else null
-
-    this.promise = promise
-
     try {
-      val csLiveness = CSLiveness(clientId, clientSecretId, vocalGuidance, identifierId, cpf)
+      this.promise = promise;
 
-      val intent = Intent(reactApplicationContext, CSLivenessActivity::class.java)
-      intent.putExtra(CSLiveness.PARAMETER_NAME, csLiveness)
+      val clientId = if (sdkParams.hasKey("clientId")) sdkParams.getString("clientId") else null
+      val clientSecretId = if (sdkParams.hasKey("clientSecretId")) sdkParams.getString("clientSecretId") else null
+      val identifierId = if (sdkParams.hasKey("identifierId")) sdkParams.getString("identifierId") else null
+      val cpf = if (sdkParams.hasKey("cpf")) sdkParams.getString("cpf") else null
+      val vocalGuidance = if (sdkParams.hasKey("identifierId")) sdkParams.getBoolean("vocalGuidance") else false
+      val primaryColor = if (sdkParams.hasKey("primaryColor")) sdkParams.getString("primaryColor") else null
+      val secondaryColor = if (sdkParams.hasKey("secondaryColor")) sdkParams.getString("secondaryColor") else null
+      val titleColor = if (sdkParams.hasKey("titleColor")) sdkParams.getString("titleColor") else null
+      val paragraphColor = if (sdkParams.hasKey("paragraphColor")) sdkParams.getString("paragraphColor") else null
 
-      reactApplicationContext.startActivityForResult(intent, requestCode, null)
+      // Now validate
+      if (clientId.isNullOrBlank()) throw Exception("clientId is required")
+      if (clientSecretId.isNullOrBlank()) throw Exception("clientSecretId is required")
+
+      val csLiveness = CSLiveness(
+        clientId, clientSecretId, identifierId, cpf, CSLivenessConfig(
+          vocalGuidance = vocalGuidance ?: false, colors = CSLivenessConfigColors(
+            primaryColor = if (!primaryColor.isNullOrBlank()) Color.parseColor(
+              primaryColor
+            ) else null,
+            secondaryColor = if (!secondaryColor.isNullOrBlank()) Color.parseColor(
+              secondaryColor
+            ) else null,
+            titleColor = if (!titleColor.isNullOrBlank()) Color.parseColor(titleColor) else null,
+            paragraphColor = if (!paragraphColor.isNullOrBlank()) Color.parseColor(
+              paragraphColor
+            ) else null
+          )
+        )
+      )
+
+      if (reactApplicationContext != null) {
+        val intent = Intent(reactApplicationContext, CSLivenessActivity::class.java)
+        intent.putExtra(parameterName, csLiveness)
+
+        reactApplicationContext.startActivityForResult(intent, requestCode, null)
+      } else {
+        throw Exception("Missing application from current activity")
+      }
     } catch (t: Throwable) {
-      Log.e("[CSLiveness]", "Error starting CSLivenessSDK", t)
+      Log.e(logTag, "Error starting CSLivenessSDK", t)
 
-      val responseMap = WritableNativeMap()
-      responseMap.putString("responseMessage", t.message ?: "InternalError")
-
-      this.promise?.resolve(responseMap)
-      this.resetPromise()
+      promise.reject("InternalError", t.message ?: "InternalError", null)
+      this.reset()
     }
   }
 
@@ -72,7 +102,7 @@ class CslivenessReactNativeModule(reactContext: ReactApplicationContext) :
       data: Intent?
     ) {
       if (activityRequestCode == requestCode) {
-        val responseMap: WritableMap = WritableNativeMap()
+        val responseMap = WritableNativeMap()
 
         try {
           if (activityResultCode != Activity.RESULT_OK || data == null) {
@@ -80,23 +110,29 @@ class CslivenessReactNativeModule(reactContext: ReactApplicationContext) :
           }
 
           val csLivenessResult =
-            data.getSerializableExtra(CSLiveness.PARAMETER_NAME) as CSLivenessResult
+            data.getSerializableExtra(parameterName) as CSLivenessResult
 
           responseMap.putBoolean("real", csLivenessResult.responseMessage.compareTo("real", true) == 0);
           responseMap.putString("responseMessage", csLivenessResult.responseMessage)
           responseMap.putString("sessionId", csLivenessResult.sessionId)
           responseMap.putString("image", csLivenessResult.image)
 
-          Log.d("[CSLiveness] Result", responseMap.toString())
-          promise?.resolve(responseMap)
-        } catch (t: Throwable) {
-          Log.e("[CSLiveness] Error", t.message ?: "An error occurred")
+          Log.d(logTag, "Result: $responseMap")
 
-          responseMap.putString("responseMessage", t.message ?: "InternalError")
-          promise?.resolve(responseMap)
+          if (!responseMap.hasKey("real") || !responseMap.getBoolean("real")) {
+            val responseMessage: String? = if (responseMap.hasKey("responseMessage")) responseMap.getString("responseMessage") as? String else null
+
+            throw Exception(responseMessage ?: "UnknownInternalError")
+          } else {
+            promise?.resolve(responseMap)
+          }
+        } catch (t: Throwable) {
+          Log.e(logTag, t.message ?: "An error occurred")
+
+          promise?.reject("SDKError", t.message ?: "InternalError", t)
         }
 
-        resetPromise()
+        reset()
       }
 
       super.onActivityResult(activity, activityRequestCode, activityResultCode, data)
@@ -108,6 +144,6 @@ class CslivenessReactNativeModule(reactContext: ReactApplicationContext) :
   }
 
   companion object {
-    const val NAME = "CslivenessReactNative"
+    const val NAME = "CSLivenessReactNative"
   }
 }

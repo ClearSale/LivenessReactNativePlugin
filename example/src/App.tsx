@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import {
   Alert,
   Animated,
+  SafeAreaView,
+  StatusBar,
   StyleSheet,
   Text,
   TextInput,
@@ -18,10 +20,10 @@ export default function App() {
   const [clientSecretId, setClientSecretId] = useState<string>('');
   const [identifierId, setIdentifierId] = useState<string | null>(null);
   const [cpf, setCpf] = useState<string | null>(null);
-  const [primaryColor, setPrimaryColor] = useState<string>('#FF4800FF');
-  const [secondaryColor, setSecondaryColor] = useState<string>('#FF4800FF');
-  const [titleColor, setTitleColor] = useState<string>('#283785FF');
-  const [paragraphColor, setParagraphColor] = useState<string>('#353840FF');
+  const [primaryColor, setPrimaryColor] = useState<string>('#FF4800');
+  const [secondaryColor, setSecondaryColor] = useState<string>('#FF4800');
+  const [titleColor, setTitleColor] = useState<string>('#283785');
+  const [paragraphColor, setParagraphColor] = useState<string>('#353840');
   const [vocalGuidance, setVocalGuidance] = useState<boolean>(false);
   const [sdkResponse, setSdkResponse] = React.useState<CSLivenessResult | null>(
     null
@@ -29,7 +31,13 @@ export default function App() {
   const { open: openCsLivenessSdk } = useCSLiveness();
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar
+        animated={true}
+        backgroundColor="#000000"
+        hidden={false}
+        barStyle="default"
+      />
       <Animated.ScrollView
         style={styles.scrollViewStyle}
         contentContainerStyle={styles.scrollViewContentStyle}
@@ -65,25 +73,25 @@ export default function App() {
             color={primaryColor}
             setColor={setPrimaryColor}
             buttonTitleStyle={styles.buttonTitle}
-            label="Primary Color"
+            label="Primary"
           />
           <ColorButton
             color={secondaryColor}
             setColor={setSecondaryColor}
             buttonTitleStyle={styles.buttonTitle}
-            label="Secondary Color"
+            label="Secondary"
           />
           <ColorButton
             color={titleColor}
             setColor={setTitleColor}
             buttonTitleStyle={styles.buttonTitle}
-            label="Title Color"
+            label="Title"
           />
           <ColorButton
             color={paragraphColor}
             setColor={setParagraphColor}
             buttonTitleStyle={styles.buttonTitle}
-            label="Paragraph Color"
+            label="Paragraph"
           />
 
           <View style={styles.checkboxContainer}>
@@ -143,7 +151,7 @@ export default function App() {
           </View>
         ) : null}
       </Animated.ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -175,9 +183,9 @@ const styles = StyleSheet.create({
   },
   checkboxAndButtonContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
     flexWrap: 'wrap',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
+    alignItems: 'center',
     gap: 20,
   },
   checkboxContainer: { flexDirection: 'row', alignItems: 'center', gap: 20 },
