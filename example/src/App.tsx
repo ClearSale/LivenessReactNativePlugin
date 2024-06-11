@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   Alert,
   Animated,
+  Platform,
   SafeAreaView,
   StatusBar,
   StyleSheet,
@@ -32,12 +33,14 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar
-        animated={true}
-        backgroundColor="#000000"
-        hidden={false}
-        barStyle="default"
-      />
+      {Platform.OS === 'ios' ? null : (
+        <StatusBar
+          animated={true}
+          backgroundColor="#000000"
+          hidden={false}
+          barStyle="default"
+        />
+      )}
       <Animated.ScrollView
         style={styles.scrollViewStyle}
         contentContainerStyle={styles.scrollViewContentStyle}

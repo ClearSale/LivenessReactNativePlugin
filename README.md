@@ -46,25 +46,22 @@ O resultado da função `open` é uma promise que pode retornar os seguintes val
 ```typescript
 type CSLivenessResult = {
   real: boolean;
-  responseMessage?: string;
+  responseMessage?: string; // Android only
   sessionId: string | null;
   image: string | null;
 };
 ```
 
 ### Atenção
-Em caso de erro, ele será retornado através do parâmetro `responseMessage`, então sempre cheque esse valor.
-A propriedade `real` é retornada tanto no `Android` quanto no `iOS`.
+A propriedade `responseMessage` é retornada somente no `Android`.
 
-Isso acontece para manter a API do `JavaScript` consistente entre para as duas plataformas (`Android` e `iOS`).
-
-A promise será rejeitada somente em casos extremos, como falha ao abrir o SDK por exemplo.
+Em caso de erro, a `promise` sera rejeitada com o motivo do erro em ambas as plataformas.
 
 ## Exemplo de uso
 ```js
 import { useCSLiveness } from 'csliveness-react-native';
 
-const reactComponent = () => {
+const ReactComponent = () => {
   const [clientId, setClientId] = React.useState<string>('');
   const [clientSecretId, setClientSecretId] = React.useState<string>('');
   const { open: openCsLivenessSdk } = useCSLiveness();
@@ -76,11 +73,17 @@ const reactComponent = () => {
     style={styles.button}
     onPress={async () => {
       try {
-        const { responseMessage, sessionId, image } =
-          await openCsLivenessSdk({
-            clientId,
-            clientSecretId,
-          });
+        const { real, responseMessage, sessionId, image } = await openCsLivenessSdk({
+          clientId,
+          clientSecretId,
+          identifierId,
+          cpf,
+          vocalGuidance,
+          primaryColor,
+          secondaryColor,
+          titleColor,
+          paragraphColor,
+        });
 
         console.log(`Received responseMessage: ${responseMessage}`);
         console.log(`Received sessionId: ${sessionId}`);
