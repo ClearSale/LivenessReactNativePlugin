@@ -1,4 +1,4 @@
-package com.cslivenessreactnative
+package br.com.clearsale.cslivenessreactnative
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule

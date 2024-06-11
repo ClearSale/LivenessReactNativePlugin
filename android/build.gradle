@@ -79,7 +79,7 @@ def supportsNamespace() {
 
 android {
   if (supportsNamespace()) {
-    namespace "com.cslivenessreactnative"
+    namespace "br.com.clearsale.cslivenessreactnative"
 
     sourceSets {
       main {

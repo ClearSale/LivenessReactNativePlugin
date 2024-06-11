@@ -1,4 +1,4 @@
-package com.cslivenessreactnativeexample
+package br.com.clearsale.cslivenessreactnativeexample
 
 import android.app.Application
 import com.facebook.react.PackageList

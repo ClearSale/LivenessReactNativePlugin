@@ -74,9 +74,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.cslivenessreactnativeexample"
+    namespace "br.com.clearsale.cslivenessreactnativeexample"
     defaultConfig {
-        applicationId "com.cslivenessreactnativeexample"
+        applicationId "br.com.clearsale.cslivenessreactnativeexample"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

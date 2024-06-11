@@ -1,4 +1,4 @@
-package com.cslivenessreactnative
+package br.com.clearsale.cslivenessreactnative
 
 import android.app.Activity
 import android.content.Intent
