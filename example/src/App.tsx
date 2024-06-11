@@ -15,6 +15,7 @@ import type { CSLivenessResult } from 'csliveness-react-native';
 import { useCSLiveness } from 'csliveness-react-native';
 import CheckBox from '@react-native-community/checkbox';
 import { ColorButton } from './ColorButton';
+import MaskInput from 'react-native-mask-input';
 
 export default function App() {
   const [clientId, setClientId] = useState<string>('');
@@ -64,11 +65,29 @@ export default function App() {
           placeholder="Identifier ID"
           onChangeText={setIdentifierId}
         />
-        <TextInput
+        <MaskInput
           style={styles.input}
           value={cpf || ''}
-          placeholder="CPF"
-          onChangeText={setCpf}
+          placeholder="CPF *"
+          onChangeText={(_, unmaskedValue) => {
+            setCpf(unmaskedValue);
+          }}
+          mask={[
+            /\d/,
+            /\d/,
+            /\d/,
+            '.',
+            /\d/,
+            /\d/,
+            /\d/,
+            '.',
+            /\d/,
+            /\d/,
+            /\d/,
+            '-',
+            /\d/,
+            /\d/,
+          ]}
         />
 
         <View style={styles.checkboxAndButtonContainer}>

@@ -5123,6 +5123,7 @@ __metadata:
     babel-plugin-module-resolver: ^5.0.0
     react: 18.2.0
     react-native: 0.73.5
+    react-native-mask-input: ^1.2.3
     react-native-wheel-color-picker: ^1.3.1
   languageName: unknown
   linkType: soft
@@ -10930,6 +10931,16 @@ __metadata:
   version: 1.0.0
   resolution: "react-native-elevation@npm:1.0.0"
   checksum: 988edf86b441459e65f5121b0f916087c94dc0fb4bf7a36da4718b633644dbf10313054208cc4758302fbaa7e1d7b99d29004efc937466ecd7d66c2372f47129
+  languageName: node
+  linkType: hard
+
+"react-native-mask-input@npm:^1.2.3":
+  version: 1.2.3
+  resolution: "react-native-mask-input@npm:1.2.3"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 245e74342430b25826459c0c89368d32afc2bea95b5894216d650f3c116cf8cb89baec5c29443694d08c7c2e27e18c1932314032bd4ff52cf4eef8b8a8325a69
   languageName: node
   linkType: hard
 
