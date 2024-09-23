@@ -19,8 +19,58 @@ const CslivenessReactNative = NativeModules.CSLivenessReactNative
     );
 
 const CSLivenessSchema = new SimpleSchema({
-  clientId: String,
-  clientSecretId: String,
+  transactionId: {
+    type: String,
+    optional: true,
+    custom() {
+      if (
+        !this.value &&
+        (!this.field('clientId').value || !this.field('clientSecretId').value)
+      ) {
+        return SimpleSchema.ErrorTypes.REQUIRED;
+      }
+      return undefined;
+    },
+  },
+  accessToken: {
+    type: String,
+    optional: true,
+    custom() {
+      if (
+        !this.value &&
+        (!this.field('clientId').value || !this.field('clientSecretId').value)
+      ) {
+        return SimpleSchema.ErrorTypes.REQUIRED;
+      }
+      return undefined;
+    },
+  },
+  clientId: {
+    type: String,
+    optional: true,
+    custom() {
+      if (
+        !this.value &&
+        (!this.field('transactionId').value || !this.field('accessToken').value)
+      ) {
+        return SimpleSchema.ErrorTypes.REQUIRED;
+      }
+      return undefined;
+    },
+  },
+  clientSecretId: {
+    type: String,
+    optional: true,
+    custom() {
+      if (
+        !this.value &&
+        (!this.field('transactionId').value || !this.field('accessToken').value)
+      ) {
+        return SimpleSchema.ErrorTypes.REQUIRED;
+      }
+      return undefined;
+    },
+  },
   vocalGuidance: {
     type: Boolean,
     optional: true,
@@ -59,11 +109,13 @@ const CSLivenessSchema = new SimpleSchema({
 });
 
 type CSLivenessConfiguration = {
-  clientId: string;
-  clientSecretId: string;
-  vocalGuidance?: boolean;
+  transactionId?: string | null;
+  accessToken?: string | null;
+  clientId?: string | null;
+  clientSecretId?: string | null;
   identifierId?: string | null;
   cpf?: string | null;
+  vocalGuidance?: boolean;
   primaryColor?: string | null;
   secondaryColor?: string | null;
   titleColor?: string | null;

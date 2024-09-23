@@ -43,35 +43,53 @@ class CSLivenessReactNative: NSObject {
             return
         }
         
-        if let clientId = sdkParams["clientId"] as? String, let clientSecretId = sdkParams["clientSecretId"] as? String, let vocalGuidance = sdkParams["vocalGuidance"] as? Bool {
-            
-            self.resolve = resolve;
-            self.reject = reject;
-            
-            let primaryColor = sdkParams["primaryColor"] != nil ? UIColor(sdkParams["primaryColor"] as! String) : nil;
-            let secondaryColor = sdkParams["secondaryColor"] != nil ? UIColor(sdkParams["secondaryColor"] as! String) : nil;
-            let titleColor = sdkParams["titleColor"] != nil ? UIColor(sdkParams["titleColor"] as! String) : nil;
-            let paragraphColor = sdkParams["paragraphColor"] != nil ? UIColor(sdkParams["paragraphColor"] as! String) : nil;
-            
-            let identifierId = sdkParams["identifierId"] as? String ?? ""
-            let cpf = sdkParams["cpf"] as? String ?? ""
-            
-            DispatchQueue.main.async {
-                let livenessConfiguration = CSLivenessConfig(clientId: clientId, clientSecret: clientSecretId, identifierId: identifierId, cpf: cpf, colors: CSLivenessColorsConfig(primaryColor: primaryColor, secondaryColor: secondaryColor, titleColor: titleColor, paragraphColor: paragraphColor))
-                
-                if let viewController = UIApplication.shared.keyWindow?.rootViewController {
-                    self.sdk = CSLiveness(configuration: livenessConfiguration, vocalGuidance: vocalGuidance)
-                    self.sdk?.delegate = self
-                    self.sdk?.start(viewController: viewController, animated: true)
-                } else {
-                    reject( "ViewControllerMissing", "Unable to find view controller",nil);
-                    
-                    self.reset()
-                }
-            }
+        let accessToken = sdkParams["accessToken"] as? String
+        let transactionId = sdkParams["transactionId"] as? String
+        
+        let clientId = sdkParams["clientId"] as? String
+        let clientSecretId = sdkParams["clientSecretId"] as? String
+        let identifierId = sdkParams["identifierId"] as? String ?? ""
+        let cpf = sdkParams["cpf"] as? String ?? ""
+        
+        
+        let vocalGuidance = sdkParams["vocalGuidance"] as? Bool ?? false
+        
+        // Colors configuration
+        let primaryColor = sdkParams["primaryColor"] != nil ? UIColor(sdkParams["primaryColor"] as! String) : nil;
+        let secondaryColor = sdkParams["secondaryColor"] != nil ? UIColor(sdkParams["secondaryColor"] as! String) : nil;
+        let titleColor = sdkParams["titleColor"] != nil ? UIColor(sdkParams["titleColor"] as! String) : nil;
+        let paragraphColor = sdkParams["paragraphColor"] != nil ? UIColor(sdkParams["paragraphColor"] as! String) : nil;
+        
+        let colorsConfiguration = CSLivenessColorsConfig(primaryColor: primaryColor, secondaryColor: secondaryColor, titleColor: titleColor, paragraphColor: paragraphColor)
+        
+        // Set up promise handlers
+        self.resolve = resolve;
+        self.reject = reject;
+        
+        if accessToken != nil && transactionId != nil {
+            self.sdk = CSLiveness(configuration: CSLivenessConfig(accessToken: accessToken!, transactionId: transactionId!, colors: colorsConfiguration), vocalGuidance: vocalGuidance)
+        } else if clientId != nil && clientSecretId != nil {
+            self.sdk = CSLiveness(
+                configuration: CSLivenessConfig(
+                    clientId: clientId!,
+                    clientSecret: clientSecretId!,
+                    identifierId: identifierId, cpf: cpf, colors: colorsConfiguration), vocalGuidance: vocalGuidance)
         } else {
-            reject( "MissingParameters", "Missing clientId, clientSecretId or both",nil);
-            self.reset();
+            reject("NoConstructorFound", "Unable to find viable constructor for SDK", nil);
+            
+            self.reset()
+            return
+        }
+        
+        DispatchQueue.main.async {
+            if let viewController = UIApplication.shared.keyWindow?.rootViewController {
+                self.sdk?.delegate = self
+                self.sdk?.start(viewController: viewController, animated: true)
+            } else {
+                reject( "ViewControllerMissing", "Unable to find view controller",nil);
+                
+                self.reset()
+            }
         }
     }
 }
