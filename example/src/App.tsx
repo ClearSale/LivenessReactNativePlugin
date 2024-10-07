@@ -11,17 +11,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import type { CSLivenessResult } from 'csliveness-react-native';
+import { type CSLivenessResult } from 'csliveness-react-native';
 import { useCSLiveness } from 'csliveness-react-native';
 import CheckBox from '@react-native-community/checkbox';
 import { ColorButton } from './ColorButton';
-import MaskInput from 'react-native-mask-input';
 
 export default function App() {
-  const [clientId, setClientId] = useState<string>('');
-  const [clientSecretId, setClientSecretId] = useState<string>('');
-  const [identifierId, setIdentifierId] = useState<string | null>(null);
-  const [cpf, setCpf] = useState<string | null>(null);
+  const [accessToken, setAccessToken] = useState<string>('');
+  const [transactionId, setTransactionId] = useState<string>('');
+
   const [primaryColor, setPrimaryColor] = useState<string>('#FF4800');
   const [secondaryColor, setSecondaryColor] = useState<string>('#FF4800');
   const [titleColor, setTitleColor] = useState<string>('#283785');
@@ -49,45 +47,15 @@ export default function App() {
         <Text style={styles.title}>CSLiveness React Native</Text>
         <TextInput
           style={styles.input}
-          value={clientId}
-          placeholder="ClientID *"
-          onChangeText={setClientId}
+          value={accessToken}
+          placeholder="AccessToken *"
+          onChangeText={setAccessToken}
         />
         <TextInput
           style={styles.input}
-          value={clientSecretId}
-          placeholder="Client Secret *"
-          onChangeText={setClientSecretId}
-        />
-        <TextInput
-          style={styles.input}
-          value={identifierId || ''}
-          placeholder="Identifier ID"
-          onChangeText={setIdentifierId}
-        />
-        <MaskInput
-          style={styles.input}
-          value={cpf || ''}
-          placeholder="CPF *"
-          onChangeText={(_, unmaskedValue) => {
-            setCpf(unmaskedValue);
-          }}
-          mask={[
-            /\d/,
-            /\d/,
-            /\d/,
-            '.',
-            /\d/,
-            /\d/,
-            /\d/,
-            '.',
-            /\d/,
-            /\d/,
-            /\d/,
-            '-',
-            /\d/,
-            /\d/,
-          ]}
+          value={transactionId}
+          placeholder="TransactionId *"
+          onChangeText={setTransactionId}
         />
 
         <View style={styles.checkboxAndButtonContainer}>
@@ -131,10 +99,8 @@ export default function App() {
           onPress={async () => {
             try {
               const response = await openCsLivenessSdk({
-                clientId,
-                clientSecretId,
-                identifierId,
-                cpf,
+                accessToken,
+                transactionId,
                 vocalGuidance,
                 primaryColor,
                 secondaryColor,

@@ -47,36 +47,44 @@ class CSLivenessReactNative(reactContext: ReactApplicationContext) :
     try {
       this.promise = promise;
 
+      val accessToken = if (sdkParams.hasKey("accessToken")) sdkParams.getString("accessToken") else null
+      val transactionId = if (sdkParams.hasKey("transactionId")) sdkParams.getString("transactionId") else null
+
       val clientId = if (sdkParams.hasKey("clientId")) sdkParams.getString("clientId") else null
       val clientSecretId = if (sdkParams.hasKey("clientSecretId")) sdkParams.getString("clientSecretId") else null
       val identifierId = if (sdkParams.hasKey("identifierId")) sdkParams.getString("identifierId") else null
       val cpf = if (sdkParams.hasKey("cpf")) sdkParams.getString("cpf") else null
-      val vocalGuidance = if (sdkParams.hasKey("identifierId")) sdkParams.getBoolean("vocalGuidance") else false
+
+      val vocalGuidance = if (sdkParams.hasKey("vocalGuidance")) sdkParams.getBoolean("vocalGuidance") else false
       val primaryColor = if (sdkParams.hasKey("primaryColor")) sdkParams.getString("primaryColor") else null
       val secondaryColor = if (sdkParams.hasKey("secondaryColor")) sdkParams.getString("secondaryColor") else null
       val titleColor = if (sdkParams.hasKey("titleColor")) sdkParams.getString("titleColor") else null
       val paragraphColor = if (sdkParams.hasKey("paragraphColor")) sdkParams.getString("paragraphColor") else null
 
-      // Now validate
-      if (clientId.isNullOrBlank()) throw Exception("clientId is required")
-      if (clientSecretId.isNullOrBlank()) throw Exception("clientSecretId is required")
-
-      val csLiveness = CSLiveness(
-        clientId, clientSecretId, identifierId, cpf, CSLivenessConfig(
-          vocalGuidance = vocalGuidance ?: false, colors = CSLivenessConfigColors(
-            primaryColor = if (!primaryColor.isNullOrBlank()) Color.parseColor(
-              primaryColor
-            ) else null,
-            secondaryColor = if (!secondaryColor.isNullOrBlank()) Color.parseColor(
-              secondaryColor
-            ) else null,
-            titleColor = if (!titleColor.isNullOrBlank()) Color.parseColor(titleColor) else null,
-            paragraphColor = if (!paragraphColor.isNullOrBlank()) Color.parseColor(
-              paragraphColor
-            ) else null
-          )
+      val csLivenessConfig = CSLivenessConfig(
+        vocalGuidance = vocalGuidance ?: false, colors = CSLivenessConfigColors(
+          primaryColor = if (!primaryColor.isNullOrBlank()) Color.parseColor(
+            primaryColor
+          ) else null,
+          secondaryColor = if (!secondaryColor.isNullOrBlank()) Color.parseColor(
+            secondaryColor
+          ) else null,
+          titleColor = if (!titleColor.isNullOrBlank()) Color.parseColor(titleColor) else null,
+          paragraphColor = if (!paragraphColor.isNullOrBlank()) Color.parseColor(
+            paragraphColor
+          ) else null
         )
       )
+
+      lateinit var csLiveness : CSLiveness;
+
+      if (!accessToken.isNullOrBlank() && !transactionId.isNullOrBlank()) {
+        csLiveness = CSLiveness(transactionId, accessToken, csLivenessConfig)
+      } else if (!clientId.isNullOrBlank() && !clientSecretId.isNullOrBlank()) {
+        csLiveness = CSLiveness(clientId, clientSecretId, identifierId, cpf, csLivenessConfig)
+      } else {
+        throw Exception("transactionId and accessToken or clientId and clientSecretId are required")
+      }
 
       if (reactApplicationContext != null) {
         val intent = Intent(reactApplicationContext, CSLivenessActivity::class.java)

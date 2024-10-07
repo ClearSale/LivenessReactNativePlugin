@@ -62,8 +62,8 @@ Em caso de erro, a `promise` sera rejeitada com o motivo do erro em ambas as pla
 import { useCSLiveness } from 'csliveness-react-native';
 
 const ReactComponent = () => {
-  const [clientId, setClientId] = React.useState<string>('');
-  const [clientSecretId, setClientSecretId] = React.useState<string>('');
+  const [accessToken, setAccessToken] = React.useState<string>('');
+  const [transactionId, setTransactionId] = React.useState<string>('');
   const { open: openCsLivenessSdk } = useCSLiveness();
 
   ...
@@ -74,10 +74,8 @@ const ReactComponent = () => {
     onPress={async () => {
       try {
         const { real, responseMessage, sessionId, image } = await openCsLivenessSdk({
-          clientId,
-          clientSecretId,
-          identifierId,
-          cpf,
+          transactionId,
+          accessToken,
           vocalGuidance,
           primaryColor,
           secondaryColor,
@@ -103,12 +101,16 @@ const ReactComponent = () => {
 }
 ```
 
+### Como obter o accessToken e transactionId?
+- `accessToken`: Faça a autenticação seguindo as instruções da [API DataTrust](https://devs.plataformadatatrust.clearsale.com.br/reference/post_v1-authentication) e obtenha o `token` do retorno.
+- `transactionId`: Crie uma transação seguindo as instruções da [API DataTrust](https://devs.plataformadatatrust.clearsale.com.br/reference/post_v1-transaction) e obtenha o `id` do retorno.
+
 ## Executando o aplicativo de exemplo
 
 1. Conecte um dispositivo físico (`Android` ou `iOS` - o nosso `SDK` não roda em emuladores, apenas em dispositivos fisícos) à sua máquina de desenvolvimento.
 2. Clone esse repositório e rode `yarn`. Como esse projeto usa `yarn workspaces`, deve-se usar o comando `yarn` para instalar as dependências.
 3. Coloque suas credenciais no arquivo `clearsale.gradle.env` (crie ele e adicione as informações conforme descrito na etapa de instalação) na raiz do projeto de exemplo e adicione também as credenciais no arquivo `example/ios/Podfile`.
-4. Rode `yarn example android|ios` (no caso do `iOS` é necessário rodar `pod install` na pasta `example/ios` primeiro).
+4. Rode `yarn example start` (no caso do `iOS` é necessário rodar `pod install` na pasta `example/ios` primeiro).
   - Caso queira rodar com o Android Studio o app de Android, é só abrir a pasta `example/android` no Android Studio.
   - Caso queira rodar com o XCode o app de iOS, é só abrir o `CslivenessReactNativeExample.xcworkspace/` com o XCode.
 5. Ao pressionar o botão `Open CSLiveness` o SDK Liveness iniciará. Após completar o fluxo o aplicativo retornara o `responseMessage`, `image` e `sessionId`.
