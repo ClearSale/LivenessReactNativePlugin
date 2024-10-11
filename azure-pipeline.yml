@@ -43,7 +43,7 @@ stages:
                   displayName: 'Build'
 
                 - script: |
-                    .yarn/releases/yarn-3.6.1.cjs release
+                    .yarn/releases/yarn-3.6.1.cjs release --ci
                   env:
                     GITHUB_TOKEN: $(GITHUB_TOKEN)
                     NPM_TOKEN: $(SEC-NPM-TOKEN-TECHLABS-STUDIO-SDK)
