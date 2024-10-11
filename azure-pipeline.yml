@@ -6,7 +6,7 @@ trigger:
 pr: none
 
 variables:
-  - group: csliveness-react-native-plugin
+  - group: release-pipelines-library
   - name: BUILD_DIR
     value: $(Build.ArtifactStagingDirectory)/builds
   - name: REPO
