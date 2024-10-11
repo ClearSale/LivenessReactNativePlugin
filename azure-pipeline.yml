@@ -39,11 +39,11 @@ stages:
                   displayName: 'Install Node.js'
 
                 - script: |
-                    yarn install && yarn prepare
+                    .yarn/releases/yarn-3.6.1.cjs install && .yarn/releases/yarn-3.6.1.cjs prepare
                   displayName: 'Build'
 
                 - script: |
-                   yarn release
+                    .yarn/releases/yarn-3.6.1.cjs release
                   env:
                     GITHUB_TOKEN: $(GITHUB_TOKEN)
                     NPM_TOKEN: $(SEC-NPM-TOKEN-TECHLABS-STUDIO-SDK)
