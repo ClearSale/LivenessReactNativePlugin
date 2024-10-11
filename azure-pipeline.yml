@@ -1,0 +1,50 @@
+trigger:
+  branches:
+    include:
+      - chore/add-azure-pipeline
+
+pr: none
+
+variables:
+  - group: csliveness-react-native-plugin
+  - name: BUILD_DIR
+    value: $(Build.ArtifactStagingDirectory)/builds
+  - name: REPO
+    value: ClearSale/LivenessReactNativePlugin
+
+stages:
+  - stage: release
+    variables:
+      - group: cs-kv-prd-core
+    jobs:
+      - deployment: release
+        pool:
+          name: AgentLinuxPrd
+        environment: FACETEC-PRD
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                  persistCredentials: true
+
+                - script: |
+                    git fetch --tags
+                    git tag | grep -v -x -f <(git ls-remote --tags origin | awk -F/ '{print $NF}') | xargs git tag -d
+                  displayName: 'Clean git TAGs'
+
+                - task: NodeTool@0
+                  inputs:
+                    versionSpec: '20.x'
+                  displayName: 'Install Node.js'
+
+                - script: |
+                    yarn install && yarn prepare
+                  displayName: 'Build'
+
+                - script: |
+                   yarn release
+                  env:
+                    GITHUB_TOKEN: $(GITHUB_TOKEN)
+                    NPM_TOKEN: $(SEC-NPM-TOKEN-TECHLABS-STUDIO-SDK)
+                  displayName: 'Run Release-It'
