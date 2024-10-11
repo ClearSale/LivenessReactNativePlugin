@@ -111,6 +111,9 @@
       "@release-it/conventional-changelog": {
         "preset": "angular"
       }
+    },
+    "publishConfig": {
+      "registry": "https://registry.npmjs.org"
     }
   },
   "eslintConfig": {
