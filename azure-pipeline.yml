@@ -45,7 +45,7 @@ stages:
                 - script: |
                     npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
 
-                    .yarn/releases/yarn-3.6.1.cjs release --ci --npm.skipChecks
+                    .yarn/releases/yarn-3.6.1.cjs release --ci --npm.skipChecks --dry-run --verbose
                   env:
                     GITHUB_TOKEN: $(GITHUB_TOKEN)
                     NPM_TOKEN: $(SEC-NPM-TOKEN-TECHLABS-STUDIO-SDK)
