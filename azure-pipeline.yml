@@ -43,6 +43,9 @@ stages:
                   displayName: 'Build'
 
                 - script: |
+                    export GITHUB_TOKEN=$GITHUB_TOKEN
+                    export NPM_TOKEN=$NPM_TOKEN
+
                     .yarn/releases/yarn-3.6.1.cjs release --ci
                   env:
                     GITHUB_TOKEN: $(GITHUB_TOKEN)
