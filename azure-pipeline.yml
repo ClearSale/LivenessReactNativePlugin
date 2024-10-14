@@ -27,11 +27,8 @@ stages:
               steps:
                 - checkout: self
                   persistCredentials: true
-
-                - script: |
-                    git fetch --tags
-                    git tag | grep -v -x -f <(git ls-remote --tags origin | awk -F/ '{print $NF}') | xargs git tag -d
-                  displayName: 'Clean git TAGs'
+                  clean: true
+                  displayName: "Checkout"
 
                 - task: NodeTool@0
                   inputs:
