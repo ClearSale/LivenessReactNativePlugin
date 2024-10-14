@@ -43,10 +43,9 @@ stages:
                   displayName: 'Build'
 
                 - script: |
-                    export GITHUB_TOKEN=$GITHUB_TOKEN
-                    export NPM_TOKEN=$NPM_TOKEN
+                    npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
 
-                    .yarn/releases/yarn-3.6.1.cjs release --ci
+                    .yarn/releases/yarn-3.6.1.cjs release --ci --npm.skipChecks
                   env:
                     GITHUB_TOKEN: $(GITHUB_TOKEN)
                     NPM_TOKEN: $(SEC-NPM-TOKEN-TECHLABS-STUDIO-SDK)
