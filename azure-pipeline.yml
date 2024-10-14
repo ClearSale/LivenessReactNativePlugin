@@ -27,8 +27,17 @@ stages:
               steps:
                 - checkout: self
                   persistCredentials: true
-                  clean: true
                   displayName: "Checkout"
+
+                - script: |
+                    #!/bin/bash
+                    set -e
+
+                    BRANCH_NAME=$(echo $(Build.SourceBranch) | sed 's/refs\/heads\///')
+                    echo "source branch: $BRANCH_NAME"
+                    git checkout $BRANCH_NAME
+                    git reset --hard origin/$BRANCH_NAME
+                  displayName: 'Checkout Branch'
 
                 - task: NodeTool@0
                   inputs:
