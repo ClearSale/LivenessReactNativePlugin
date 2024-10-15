@@ -49,6 +49,10 @@ stages:
                   displayName: 'Build'
 
                 - script: |
+                    # Configure Git to use Azure DevOps authentication
+                    echo "Setting credentials up..."
+                    git config --global credential.helper 'store --file=$(Pipeline.Workspace)/.git-credentials'
+
                     npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
 
                     .yarn/releases/yarn-3.6.1.cjs release --ci --npm.skipChecks --verbose
