@@ -1,7 +1,7 @@
 trigger:
   branches:
     include:
-      - chore/add-azure-pipeline
+      - main
 
 pr: none
 
@@ -51,7 +51,7 @@ stages:
                 - script: |
                     npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
 
-                    .yarn/releases/yarn-3.6.1.cjs release --ci --npm.skipChecks --dry-run --verbose
+                    .yarn/releases/yarn-3.6.1.cjs release --ci --npm.skipChecks --verbose
                   env:
                     GITHUB_TOKEN: $(GITHUB_TOKEN)
                     NPM_TOKEN: $(SEC-NPM-TOKEN-TECHLABS-STUDIO-SDK)

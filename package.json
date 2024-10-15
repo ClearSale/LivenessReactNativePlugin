@@ -41,14 +41,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/matheusccastroo/csliveness-react-native.git"
+    "url": "git+https://github.com/matheusccastroo/LivenessReactNativePlugin.git"
   },
   "author": "matheusccastro <camargodecastromatheus@gmail.com> (https://github.com/matheusccastroo)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/matheusccastroo/csliveness-react-native/issues"
+    "url": "https://github.com/matheusccastroo/LivenessReactNativePlugin/issues"
   },
-  "homepage": "https://github.com/matheusccastroo/csliveness-react-native#readme",
+  "homepage": "https://github.com/matheusccastroo/LivenessReactNativePlugin#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
