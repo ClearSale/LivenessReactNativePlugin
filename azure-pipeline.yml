@@ -1,0 +1,58 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pr: none
+
+variables:
+  - group: release-pipelines-library
+  - name: BUILD_DIR
+    value: $(Build.ArtifactStagingDirectory)/builds
+  - name: REPO
+    value: ClearSale/LivenessReactNativePlugin
+
+stages:
+  - stage: release
+    variables:
+      - group: cs-kv-prd-core
+    jobs:
+      - deployment: release
+        pool:
+          name: AgentLinuxPrd
+        environment: FACETEC-PRD
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                  persistCredentials: true
+                  displayName: "Checkout"
+
+                - script: |
+                    #!/bin/bash
+                    set -e
+
+                    BRANCH_NAME=$(echo $(Build.SourceBranch) | sed 's/refs\/heads\///')
+                    echo "source branch: $BRANCH_NAME"
+                    git fetch origin
+                    git checkout $BRANCH_NAME
+                  displayName: 'Checkout Branch'
+
+                - task: NodeTool@0
+                  inputs:
+                    versionSpec: '20.x'
+                  displayName: 'Install Node.js'
+
+                - script: |
+                    .yarn/releases/yarn-3.6.1.cjs install && .yarn/releases/yarn-3.6.1.cjs prepare
+                  displayName: 'Build'
+
+                - script: |
+                    npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
+
+                    .yarn/releases/yarn-3.6.1.cjs release --ci --npm.skipChecks --verbose
+                  env:
+                    GITHUB_TOKEN: $(GITHUB_TOKEN)
+                    NPM_TOKEN: $(SEC-NPM-TOKEN-TECHLABS-STUDIO-SDK)
+                  displayName: 'Run Release-It'
