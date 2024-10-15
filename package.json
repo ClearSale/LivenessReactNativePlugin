@@ -1,5 +1,5 @@
 {
-  "name": "csliveness-react-native-test",
+  "name": "csliveness-react-native",
   "version": "0.1.0",
   "description": "CSLiveness React Native",
   "main": "lib/commonjs/index",
