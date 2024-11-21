@@ -50,11 +50,6 @@ class CSLivenessReactNative(reactContext: ReactApplicationContext) :
       val accessToken = if (sdkParams.hasKey("accessToken")) sdkParams.getString("accessToken") else null
       val transactionId = if (sdkParams.hasKey("transactionId")) sdkParams.getString("transactionId") else null
 
-      val clientId = if (sdkParams.hasKey("clientId")) sdkParams.getString("clientId") else null
-      val clientSecretId = if (sdkParams.hasKey("clientSecretId")) sdkParams.getString("clientSecretId") else null
-      val identifierId = if (sdkParams.hasKey("identifierId")) sdkParams.getString("identifierId") else null
-      val cpf = if (sdkParams.hasKey("cpf")) sdkParams.getString("cpf") else null
-
       val vocalGuidance = if (sdkParams.hasKey("vocalGuidance")) sdkParams.getBoolean("vocalGuidance") else false
       val primaryColor = if (sdkParams.hasKey("primaryColor")) sdkParams.getString("primaryColor") else null
       val secondaryColor = if (sdkParams.hasKey("secondaryColor")) sdkParams.getString("secondaryColor") else null
@@ -80,10 +75,8 @@ class CSLivenessReactNative(reactContext: ReactApplicationContext) :
 
       if (!accessToken.isNullOrBlank() && !transactionId.isNullOrBlank()) {
         csLiveness = CSLiveness(transactionId, accessToken, csLivenessConfig)
-      } else if (!clientId.isNullOrBlank() && !clientSecretId.isNullOrBlank()) {
-        csLiveness = CSLiveness(clientId, clientSecretId, identifierId, cpf, csLivenessConfig)
       } else {
-        throw Exception("transactionId and accessToken or clientId and clientSecretId are required")
+        throw Exception("transactionId and accessToken are required")
       }
 
       if (reactApplicationContext != null) {
