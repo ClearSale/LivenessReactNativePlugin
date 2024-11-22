@@ -21,70 +21,16 @@ const CslivenessReactNative = NativeModules.CSLivenessReactNative
 const CSLivenessSchema = new SimpleSchema({
   transactionId: {
     type: String,
-    optional: true,
-    custom() {
-      if (
-        !this.value &&
-        (!this.field('clientId').value || !this.field('clientSecretId').value)
-      ) {
-        return SimpleSchema.ErrorTypes.REQUIRED;
-      }
-      return undefined;
-    },
+    optional: false,
   },
   accessToken: {
     type: String,
-    optional: true,
-    custom() {
-      if (
-        !this.value &&
-        (!this.field('clientId').value || !this.field('clientSecretId').value)
-      ) {
-        return SimpleSchema.ErrorTypes.REQUIRED;
-      }
-      return undefined;
-    },
-  },
-  clientId: {
-    type: String,
-    optional: true,
-    custom() {
-      if (
-        !this.value &&
-        (!this.field('transactionId').value || !this.field('accessToken').value)
-      ) {
-        return SimpleSchema.ErrorTypes.REQUIRED;
-      }
-      return undefined;
-    },
-  },
-  clientSecretId: {
-    type: String,
-    optional: true,
-    custom() {
-      if (
-        !this.value &&
-        (!this.field('transactionId').value || !this.field('accessToken').value)
-      ) {
-        return SimpleSchema.ErrorTypes.REQUIRED;
-      }
-      return undefined;
-    },
+    optional: false,
   },
   vocalGuidance: {
     type: Boolean,
     optional: true,
     defaultValue: false,
-  },
-  identifierId: {
-    type: String,
-    defaultValue: null,
-    optional: true,
-  },
-  cpf: {
-    type: String,
-    defaultValue: null,
-    optional: true,
   },
   primaryColor: {
     type: String,
@@ -111,10 +57,6 @@ const CSLivenessSchema = new SimpleSchema({
 type CSLivenessConfiguration = {
   transactionId?: string | null;
   accessToken?: string | null;
-  clientId?: string | null;
-  clientSecretId?: string | null;
-  identifierId?: string | null;
-  cpf?: string | null;
   vocalGuidance?: boolean;
   primaryColor?: string | null;
   secondaryColor?: string | null;
