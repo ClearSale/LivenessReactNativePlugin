@@ -128,7 +128,8 @@ O SDK da ClearSale coleta as seguintes informações do dispositivo :
 Características físicas do dispositivo/ hardware (Como tela, modelo, nome do dispositivo);
 Características de software (Como versão, idioma, build, controle parental);
 Informações da câmera;
-Licença de Uso
+
+## Licença de Uso
 Ao realizar o download e utilizar nosso SDK você estará concordando com a seguinte licença:
 
 **Copyright © 2022 ClearSale**
