@@ -25,6 +25,7 @@ export default function App() {
   const [titleColor, setTitleColor] = useState<string>('#283785');
   const [paragraphColor, setParagraphColor] = useState<string>('#353840');
   const [vocalGuidance, setVocalGuidance] = useState<boolean>(false);
+  const [usePrd, setUsePrd] = useState<boolean>(false);
   const [sdkResponse, setSdkResponse] = React.useState<CSLivenessResult | null>(
     null
   );
@@ -92,12 +93,22 @@ export default function App() {
             />
             <Text>Vocal Guidance</Text>
           </View>
+
+          <View style={styles.checkboxContainer}>
+            <CheckBox
+              disabled={false}
+              value={usePrd}
+              onValueChange={setUsePrd}
+            />
+            <Text>Use PRD</Text>
+          </View>
         </View>
 
         <TouchableOpacity
           style={styles.button}
           onPress={async () => {
             try {
+              const environment = usePrd ? 'PRD' : 'HML';
               const response = await openCsLivenessSdk({
                 accessToken,
                 transactionId,
@@ -106,6 +117,7 @@ export default function App() {
                 secondaryColor,
                 titleColor,
                 paragraphColor,
+                environment,
               });
 
               setSdkResponse({

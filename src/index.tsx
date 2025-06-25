@@ -52,6 +52,11 @@ const CSLivenessSchema = new SimpleSchema({
     defaultValue: null,
     optional: true,
   },
+  environment: {
+    type: String,
+    allowedValues: ['PRD', 'HML'],
+    optional: false,
+  },
 });
 
 type CSLivenessConfiguration = {
@@ -62,6 +67,7 @@ type CSLivenessConfiguration = {
   secondaryColor?: string | null;
   titleColor?: string | null;
   paragraphColor?: string | null;
+  environment?: string | null;
 };
 
 export type CSLivenessResult = {
