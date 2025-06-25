@@ -7,6 +7,7 @@ import android.util.Log
 import com.clear.studio.csliveness.core.CSLiveness
 import com.clear.studio.csliveness.core.CSLivenessConfig
 import com.clear.studio.csliveness.core.CSLivenessConfigColors
+import com.clear.studio.csliveness.core.CSLivenessEnvironments
 import com.clear.studio.csliveness.core.CSLivenessResult
 import com.clear.studio.csliveness.view.CSLivenessActivity
 import com.facebook.react.bridge.ActivityEventListener
@@ -49,6 +50,7 @@ class CSLivenessReactNative(reactContext: ReactApplicationContext) :
 
       val accessToken = if (sdkParams.hasKey("accessToken")) sdkParams.getString("accessToken") else null
       val transactionId = if (sdkParams.hasKey("transactionId")) sdkParams.getString("transactionId") else null
+      val environmentStr = if (sdkParams.hasKey("environment")) sdkParams.getString("environment") else null
 
       val vocalGuidance = if (sdkParams.hasKey("vocalGuidance")) sdkParams.getBoolean("vocalGuidance") else false
       val primaryColor = if (sdkParams.hasKey("primaryColor")) sdkParams.getString("primaryColor") else null
@@ -73,8 +75,12 @@ class CSLivenessReactNative(reactContext: ReactApplicationContext) :
 
       lateinit var csLiveness : CSLiveness;
 
-      if (!accessToken.isNullOrBlank() && !transactionId.isNullOrBlank()) {
-        csLiveness = CSLiveness(transactionId, accessToken, csLivenessConfig)
+      if (!accessToken.isNullOrBlank() && !transactionId.isNullOrBlank() && !environmentStr.isNullOrBlank()) {
+        val environment = when (environmentStr) {
+          "HML" -> CSLivenessEnvironments.HML
+          else -> CSLivenessEnvironments.PRD
+        }
+        csLiveness = CSLiveness(transactionId, accessToken, environment, csLivenessConfig)
       } else {
         throw Exception("transactionId and accessToken are required")
       }

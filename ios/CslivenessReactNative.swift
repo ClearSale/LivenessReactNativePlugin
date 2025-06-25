@@ -56,12 +56,16 @@ class CSLivenessReactNative: NSObject {
 
         let colorsConfiguration = CSLivenessColorsConfig(primaryColor: primaryColor, secondaryColor: secondaryColor, titleColor: titleColor, paragraphColor: paragraphColor)
 
+        let environmentStr = sdkParam["environment"] as? String
+
         // Set up promise handlers
         self.resolve = resolve;
         self.reject = reject;
 
-        if accessToken != nil && transactionId != nil {
-            self.sdk = CSLiveness(configuration: CSLivenessConfig(accessToken: accessToken!, transactionId: transactionId!, colors: colorsConfiguration), vocalGuidance: vocalGuidance)
+        if accessToken != nil && transactionId != nil && environmentStr != nil {
+            let environment: CSLivenessEnvironments = environmentStr! == "HML" ? .HML : .PRD
+
+            self.sdk = CSLiveness(configuration: CSLivenessConfig(accessToken: accessToken!, transactionId: transactionId!, colors: colorsConfiguration, environment: environment!), vocalGuidance: vocalGuidance)
         } else {
             reject("NoConstructorFound", "Unable to find viable constructor for SDK", nil);
 
