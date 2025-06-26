@@ -78,7 +78,8 @@ class CSLivenessReactNative(reactContext: ReactApplicationContext) :
       if (!accessToken.isNullOrBlank() && !transactionId.isNullOrBlank() && !environmentStr.isNullOrBlank()) {
         val environment = when (environmentStr) {
           "HML" -> CSLivenessEnvironments.HML
-          else -> CSLivenessEnvironments.PRD
+          "PRD" -> CSLivenessEnvironments.PRD
+          else -> throw Exception("Invalid environment")
         }
         csLiveness = CSLiveness(transactionId, accessToken, environment, csLivenessConfig)
       } else {

@@ -59,7 +59,7 @@ const CSLivenessSchema = new SimpleSchema({
   },
   environment: {
     type: String,
-    allowedValues: ['PRD', 'HML'],
+    allowedValues: Object.values(Environments),
     optional: false,
   },
 });
