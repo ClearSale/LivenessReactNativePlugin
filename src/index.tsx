@@ -19,8 +19,8 @@ const CslivenessReactNative = NativeModules.CSLivenessReactNative
     );
 
 export enum Environments {
-  HML,
-  PRD,
+  HML = 'HML',
+  PRD = 'PRD',
 }
 
 const CSLivenessSchema = new SimpleSchema({
