@@ -12,7 +12,7 @@ import {
   View,
 } from 'react-native';
 import { type CSLivenessResult } from 'csliveness-react-native';
-import { useCSLiveness } from 'csliveness-react-native';
+import { useCSLiveness, Environments } from 'csliveness-react-native';
 import CheckBox from '@react-native-community/checkbox';
 import { ColorButton } from './ColorButton';
 
@@ -108,7 +108,7 @@ export default function App() {
           style={styles.button}
           onPress={async () => {
             try {
-              const environment = usePrd ? 'PRD' : 'HML';
+              const environment = usePrd ? Environments.PRD : Environments.HML;
               const response = await openCsLivenessSdk({
                 accessToken,
                 transactionId,

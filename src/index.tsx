@@ -18,6 +18,11 @@ const CslivenessReactNative = NativeModules.CSLivenessReactNative
       }
     );
 
+export enum Environments {
+  HML,
+  PRD,
+}
+
 const CSLivenessSchema = new SimpleSchema({
   transactionId: {
     type: String,
@@ -67,7 +72,7 @@ type CSLivenessConfiguration = {
   secondaryColor?: string | null;
   titleColor?: string | null;
   paragraphColor?: string | null;
-  environment?: string | null;
+  environment: Environments;
 };
 
 export type CSLivenessResult = {
