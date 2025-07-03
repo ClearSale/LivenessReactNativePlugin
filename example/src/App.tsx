@@ -20,8 +20,8 @@ export default function App() {
   const [accessToken, setAccessToken] = useState<string>('');
   const [transactionId, setTransactionId] = useState<string>('');
 
-  const [primaryColor, setPrimaryColor] = useState<string>('#FF4800');
-  const [secondaryColor, setSecondaryColor] = useState<string>('#FF4800');
+  const [primaryColor, setPrimaryColor] = useState<string>('#002DD1');
+  const [secondaryColor, setSecondaryColor] = useState<string>('#002DD1');
   const [titleColor, setTitleColor] = useState<string>('#283785');
   const [paragraphColor, setParagraphColor] = useState<string>('#353840');
   const [vocalGuidance, setVocalGuidance] = useState<boolean>(false);
