@@ -1,6 +1,6 @@
 {
   "name": "csliveness-react-native",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "CSLiveness React Native",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
