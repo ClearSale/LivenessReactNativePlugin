@@ -81,6 +81,7 @@ const ReactComponent = () => {
           secondaryColor,
           titleColor,
           paragraphColor,
+          environment: Environments.HML
         });
 
         console.log(`Received responseMessage: ${responseMessage}`);
