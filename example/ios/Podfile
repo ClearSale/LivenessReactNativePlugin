@@ -10,6 +10,10 @@ prepare_react_native_project!
 
 use_frameworks!
 
+plugin 'cocoapods-azure-universal-packages', {
+    :organization => 'https://dev.azure.com/CS-PublicPackages/'
+}
+
 # If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
 # because `react-native-flipper` depends on (FlipperKit,...) that will be excluded
 #
@@ -30,10 +34,11 @@ end
 target 'CslivenessReactNativeExample' do
   config = use_native_modules!
 
-  pod 'CSLivenessSDK', :git => 'https://CS-Packages: <TOKEN AQUI> @dev.azure.com/CS-Package/ID-Lab-PackagesSDK/_git/CSLivenessSDK', :tag => 'VERSAO AQUI'
+  pod "CSLivenessSDK", :http => 'https://dev.azure.com/CS-PublicPackages/SDKS/_apis/packaging/feeds/SDKS/upack/packages/cslivenesssdk-ios/versions/4.0.0'
 
   use_react_native!(
     :path => config[:reactNativePath],
+    :hermes_enabled => false,
     # Enables Flipper.
     #
     # Note that if you have use_frameworks! enabled, Flipper will not work and
