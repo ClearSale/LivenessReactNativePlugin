@@ -1,38 +1,4 @@
 
-def setupEnvFile(searchParam) {
-  if (searchParam !== null && System.properties[searchParam] !== null) {
-    return System.properties[searchParam]
-  }
-
-  if (System.properties['ENV_FILE_PATH'] == null) {
-    // First try searching on project root.
-    def projectFileEnv = new File("$rootProject.rootDir/../clearsale.gradle.env")
-    def projectFileEnvExists = projectFileEnv.exists()
-    if (projectFileEnvExists) {
-      System.properties['ENV_FILE_PATH'] = projectFileEnv.path
-    } else {
-      System.properties['ENV_FILE_PATH'] = System.env.DIRNAME ?: System.env.PWD + "/../clearsale.gradle.env"
-    }
-  }
-
-  file(System.properties['ENV_FILE_PATH']).readLines().each() {
-    def (key, value) = it.tokenize('=');
-    if (key !== null && value !== null) {
-      System.properties[key] = value
-    } else {
-      throw new InvalidUserDataException("[CSLIVENESS SDK] - Invalid value for clearsale.gradle.env. Received key: $key, value: $value")
-    }
-  }
-
-  if (searchParam !== null) {
-    return System.properties[searchParam]
-  }
-
-  return null
-}
-
-setupEnvFile()
-
 buildscript {
   // Buildscript is evaluated before everything else so we can't use getExtOrDefault
   def kotlin_version = rootProject.ext.has("kotlinVersion") ? rootProject.ext.get("kotlinVersion") : project.properties["CslivenessReactNative_kotlinVersion"]
@@ -119,15 +85,7 @@ rootProject.allprojects {
     google()
     mavenCentral()
     maven {
-      url  System.properties['CS_LIVENESS_TEC_ARTIFACTS_FEED_URL']
-      name  System.properties['CS_LIVENESS_TEC_ARTIFACTS_FEED_NAME']
-      credentials {
-        username System.properties['CS_LIVENESS_TEC_USER']
-        password  System.properties['CS_LIVENESS_TEC_PASS']
-      }
-      authentication {
-        basic(BasicAuthentication)
-      }
+      url "https://pkgs.dev.azure.com/CS-PublicPackages/SDKS/_packaging/SDKS/maven/v1"
     }
   }
 }
@@ -138,6 +96,5 @@ dependencies {
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-android:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation "sale.clear.studio:sdk-csliveness:$System.properties.CS_LIVENESS_VERSION"
+  implementation "com.clear.sale:cslivenesssdk:4.0.1"
 }
-
