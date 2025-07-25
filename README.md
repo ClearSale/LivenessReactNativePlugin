@@ -1,43 +1,74 @@
-# csliveness-react-native
+# SDK ClearSale Liveness React-Native
 
-CSLiveness para React Native
+Os SDKs de Liveness permitem a realização de provas de vida.
+
+## Requisitos
+
+### Android
+- Versão mínima do SDK android: `21` (`v5`)
+- Versão `compileSDK` android: `35`
+- Versão `kotlin` mínima: `2.0.0`
+
+### iOS
+- Versão mínima do iOS: `15.0`
+- Adicionar permissão de câmera (`NSCameraUsageDescription`) e acesso a pasta de documentos (`NSDocumentsFolderUsageDescription`) no seu `Info.plist`
+- Cocoapods
+- Versão mínima do `Swift`:  `5.0`
+
+### React-Native
+- Usar a arquitetura antiga ou usar o modo de `interop` na nova arquitetura.
 
 ## Instalação
 
-```sh
+Para começar a usar o SDK, você precisa instalá-lo em seu projeto. Supondo que você já tenha um projeto React-Native, você pode instalar o SDK usando `npm install`:
+
+Primeiro, adicione o plugin ao seu `package.json`:
+
+```shell
 npm install csliveness-react-native
 ```
 
-#### Android
-Adicione um arquivo `clearsale.gradle.env` na raiz do seu projeto de react-native.
-Esse arquivo deve conter as seguintes propriedades:
+Ou usando `yarn`:
 
-```
-CS_LIVENESS_TEC_ARTIFACTS_FEED_URL= // fornecido pela clearsale
-CS_LIVENESS_TEC_ARTIFACTS_FEED_NAME= // fornecido pela clearsale
-CS_LIVENESS_TEC_USER= // fornecido pela clearsale
-CS_LIVENESS_TEC_PASS= // fornecido pela clearsale
-CS_LIVENESS_VERSION= // fornecido pela clearsale
+```shell
+yarn add @clear.sale/react-native-csdocumentoscopysdk
 ```
 
-#### iOS
-No arquivo `Podfile` de seu projeto adicione o seguinte código:
+Então, adicione nosso repositório na sua lista de repositórios (no seu arquivo `build.gradle.kts` ou `build.gradle`) no seu projeto `android` nativo:
 
+```kotlin
+allprojects {
+    repositories {
+        ...
+        maven {
+          url = uri("https://pkgs.dev.azure.com/CS-PublicPackages/SDKS/_packaging/SDKS/maven/v1")
+        }
+    }
+}
 ```
-platform :ios, '15.0'
 
-use_frameworks!
+Para `iOS`, primeiro instale o plugin [cocoapods-azure-universal-packages](https://github.com/microsoft/cocoapods-azure-universal-packages).
 
-target 'NOME_DO_SEU_PROJETO' do
-  pod 'CSLivenessSDK', :git => 'URL DO REPOSITÓRIO ENVIADO PELA CLEARSALE', :tag => 'VERSÃO AQUI'
-end
+Após isso, certifique-se de logar no azure cli com az devops login usando o `PAT` que foi enviado para você por e-mail.
+
+```shell
+az devops login --organization https://dev.azure.com/CS-PublicPackages
 ```
 
-Adicione também no sue `Info.plist` a seguinte entrada:
+Feito isso, adicione nosso repositório no seu Podfile:
+
+```ruby
+plugin 'cocoapods-azure-universal-packages', {
+    :organization => 'https://dev.azure.com/CS-PublicPackages/'
+}
 ```
-<key>NSCameraUsageDescription</key>
-<string>This app requires access to the camera.</string>
+
+Então, adicione o `SDK` como sua dependência no `Podfile`:
+
+```ruby
+  pod "CSLivenessSDK", :http => 'https://dev.azure.com/CS-PublicPackages/SDKS/_apis/packaging/feeds/SDKS/upack/packages/cslivenesssdk-ios/versions/4.0.0'
 ```
+
 
 ## Instruções de uso
 Importe o plugin no seu projeto e use o `useCSLiveness` hook para receber uma função `open` que irá chamar a SDK nativa do dispositivo.
@@ -106,6 +137,15 @@ const ReactComponent = () => {
 - `accessToken`: Faça a autenticação seguindo as instruções da [API DataTrust](https://devs.plataformadatatrust.clearsale.com.br/reference/post_v1-authentication) e obtenha o `token` do retorno.
 - `transactionId`: Crie uma transação seguindo as instruções da [API DataTrust](https://devs.plataformadatatrust.clearsale.com.br/reference/post_v1-transaction) e obtenha o `id` do retorno.
 
+
+## Ambiente
+
+Ao iniciar o SDK, você pode informar o ambiente desejado. Todas as requisições serão feitas para este ambiente,
+portanto, o método de login fornecido deve apontar para o mesmo.
+
+- **HML**: Ambiente de homologação. Todas as requisições do SDK serão feitas para o ambiente de homologação.
+- **PRD**: Ambiente de produção. Todas as requisições do SDK serão feitas para o ambiente de produção.
+
 ## Executando o aplicativo de exemplo
 
 1. Conecte um dispositivo físico (`Android` ou `iOS` - o nosso `SDK` não roda em emuladores, apenas em dispositivos fisícos) à sua máquina de desenvolvimento.
@@ -116,24 +156,9 @@ const ReactComponent = () => {
   - Caso queira rodar com o XCode o app de iOS, é só abrir o `CslivenessReactNativeExample.xcworkspace/` com o XCode.
 5. Ao pressionar o botão `Open CSLiveness` o SDK Liveness iniciará. Após completar o fluxo o aplicativo retornara o `responseMessage`, `image` e `sessionId`.
 
-## Detalhes de privacidade
+## Licença
 
-**Uso de dados**
-
-Todas as informações coletadas pelo SDK da ClearSale são com exclusiva finalidade de prevenção à fraude e proteção ao próprio usuário, aderente à política de segurança e privacidade das plataformas Google e Apple e à LGPD. Por isso, estas informações devem constar na política de privacidade do aplicativo.
-
-**Tipo de dados coletados**
-
-O SDK da ClearSale coleta as seguintes informações do dispositivo :
-
-Características físicas do dispositivo/ hardware (Como tela, modelo, nome do dispositivo);
-Características de software (Como versão, idioma, build, controle parental);
-Informações da câmera;
-
-## Licença de Uso
-Ao realizar o download e utilizar nosso SDK você estará concordando com a seguinte licença:
-
-**Copyright © 2022 ClearSale**
+Copyright © 2025 ClearSale
 
 Todos os direitos são reservados, sendo concedida a permissão para usar o software da maneira como está, não sendo permitido qualquer modificação ou cópia para qualquer fim. O Software é licenciado com suas atuais configurações “tal como está” e sem garantia de qualquer espécie, nem expressa e nem implícita, incluindo mas não se limitando, garantias de comercialização, adequação para fins particulares e não violação de direitos patenteados. Em nenhuma hipótese os titulares dos Direitos Autorais podem ser responsabilizados por danos, perdas, causas de ação, quer seja por contrato ou ato ilícito, ou outra ação tortuosa advinda do uso do Software ou outras ações relacionadas com este Software sem prévia autorização escrita do detentor dos direitos autorais.
 
