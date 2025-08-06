@@ -47,26 +47,10 @@ allprojects {
 }
 ```
 
-Para `iOS`, primeiro instale o plugin [cocoapods-azure-universal-packages](https://github.com/microsoft/cocoapods-azure-universal-packages).
-
-Após isso, certifique-se de logar no azure cli com az devops login usando o `PAT` que foi enviado para você por e-mail.
-
-```shell
-az devops login --organization https://dev.azure.com/CS-PublicPackages
-```
-
-Feito isso, adicione nosso repositório no seu Podfile:
+Para `iOS`, adicione o `SDK` como sua dependência no `Podfile`:
 
 ```ruby
-plugin 'cocoapods-azure-universal-packages', {
-    :organization => 'https://dev.azure.com/CS-PublicPackages/'
-}
-```
-
-Então, adicione o `SDK` como sua dependência no `Podfile`:
-
-```ruby
-  pod "CSLivenessSDK", :http => 'https://dev.azure.com/CS-PublicPackages/SDKS/_apis/packaging/feeds/SDKS/upack/packages/cslivenesssdk-ios/versions/4.0.0'
+  pod 'CSLivenessSDK', :git => 'https://CS-Packages:<TOKEN AQUI>@dev.azure.com/CS-Package/ID-Lab-PackagesSDK/_git/CSLivenessSDK', :tag => '4.0.1'
 ```
 
 

@@ -96,5 +96,5 @@ dependencies {
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-android:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation "com.clear.sale:cslivenesssdk:4.0.1"
+  implementation "com.clear.sale:cslivenesssdk:4.0.2"
 }
